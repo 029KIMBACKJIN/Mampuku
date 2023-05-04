@@ -1,0 +1,19 @@
+@startuml
+title クラス図
+class ログイン画面
+class 新規作成画面
+class ログイン拒否
+class サーバ
+
+class データベース{
+    taskName: string
+    deadLine: yyyy/mm/dd
+    added:yyyy/mm/dd
+    span: integer
+    taskContent: string
+    memo: string
+}
+
+
+
+@enduml
