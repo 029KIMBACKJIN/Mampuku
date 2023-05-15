@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang = "ja">
+    <head>
+        <meta charset = "UTF-8"/>
+        <title>タスク管理×マインドマップ</title>
+        <%- include("./temp/bootstrap.ejs");%>
+        <%- include("./temp/fontawesome.ejs");%>
+    </head>
+    <body>
+        <%- include("./temp/header.ejs");%>
+        <h1>メインメニュー</h1>
+        <div class = "MainFlame">
+            <!---->
+            <%- include("./parts/menuBar.ejs");%>
+            <%- include("./parts/calender.ejs");%>
+            <%- include("./parts/mindMap.ejs");%>
+            <%- include("./parts/taskAdd.ejs");%>
+        </div>
+        <%- include("./temp/footer.ejs");%>
+    </body>
+</html>
