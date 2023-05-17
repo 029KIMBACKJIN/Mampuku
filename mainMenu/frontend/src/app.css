@@ -17,6 +17,7 @@ html{
 .left{
     background-color: blue;
     display: inline-block;
+    float: left;   /*要素を左寄せにする*/
     width: 74.8%;
     margin: 0.1%;
 }
@@ -24,6 +25,7 @@ html{
 .right{
     background-color: blue;
     display: inline-block;
+    float:right;/*要素を右寄せにする*/
     width:24.8%;
     margin: 0.1%;
 }
