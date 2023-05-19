@@ -2,28 +2,43 @@
     <!--translateでドラッグ移動、scaleでサイズ変更がパラメータでできる
         MindMapDraw内であればドラッグを有効にする。ドラッグ中に枠から出たら強制的にドラッグ解除
     -->
-    <div class = "MindMapDraw" 
-    v-on:mouseup="mouseClickUp($event)"
-    v-on:mouseleave="mouseClickUp($event)"
+    <div id = "MindMapDraw" 
+    v-on:dblclick="mouseDoubleClick($event)"
     >
-        <MindMapNode/>
+        <div>
+            <MindMapNode/>
+        </div>
     </div>
 </template>
 
 <script>
-import MindMapNode from './MindMapNode.vue'
+import MindMapNode from './MindMapNode.vue';
+import { createApp } from "vue"
+//ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
+//そのパラメータの状態によってv-ifでイベントを発火させる。
 
 //タスクアイコンをクリックしたらmethodで呼び出す。
+//isCreateNode=作られたタスクがあるかどうか。外部から作られたかどうかの状態を取得して
+//v-if:isCreateNodeで発火する。
 export default{
     name: "MindMapDraw",
     props: {},
     data: () => ({
+        isCreateNode:false
     }),
     components: {
         MindMapNode
     },
     methods:{
         mouseDoubleClick: function(){
+            //コンポーネントを生成する
+            var Component = createApp(MindMapNode);
+            //divというタグの要素を生成する
+            const wrapper = document.createElement("div");
+            //wrapperのタグ内に生成したコンポーネントを入れる。
+            Component.mount(wrapper);
+            //MindMapDrawというidを持つ要素の中に入れる
+            document.getElementById("MindMapDraw").appendChild(wrapper);
         },
         mouseClickUp:function(){
         }

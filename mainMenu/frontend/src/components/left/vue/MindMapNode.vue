@@ -36,6 +36,7 @@ export default{
     },
     methods:{
         mouseDoubleClick: function(){
+            this.TaskNode.taskName = "ノードでダブルクリックした";
             /*
             this.TaskNode.taskName = "ダブルクリックした";
             //要素を複製する処理(idを引数に入れる)

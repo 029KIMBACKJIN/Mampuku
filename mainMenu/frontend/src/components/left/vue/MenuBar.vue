@@ -19,7 +19,6 @@ axios.get(/...)  サーバにアクセスする
 then((変数) => {処理}) 通信に成功したら変数に、サーバから送られてきた情報(sendやsendFileなど)が入る。
 catch((変数) => {処理}) 通信に失敗したら変数にエラー情報が入る
 */
-const API_URL = 'http://localhost:3000'
 export default {
     name: "MenuBar",
     props:{
@@ -31,7 +30,7 @@ export default {
     }),
     methods:{
         HowToButton:function(){
-            axios.get(API_URL + "/MenuBar/howTo")
+            axios.get("/MenuBar/howTo")
             .then((res) => {
                 //console.logはなぜか出力されない
                 console.log(res.data);
@@ -55,6 +54,7 @@ export default {
             axios.get("/MenuBar/other")
             .then((res) => {
                 alert(res.data);
+
             })
             .catch((e) => {
                 alert(e);

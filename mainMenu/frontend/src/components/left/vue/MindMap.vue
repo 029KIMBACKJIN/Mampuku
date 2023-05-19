@@ -1,7 +1,7 @@
 <template>
     <div class = "MindMap">
         <h1>マインドマップ</h1>
-        <div class = "MindMapDraw">
+        <div class = "MindMapDrawArea">
             <MindMapDraw/>
         </div>
     </div>
