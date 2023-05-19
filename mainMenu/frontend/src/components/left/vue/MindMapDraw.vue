@@ -5,9 +5,13 @@
     <div id = "MindMapDraw" 
     v-on:dblclick="mouseDoubleClick($event)"
     >
-        <div>
+        <!--このノードは見えなくする-->
+        <div v-show="false">
             <MindMapNode/>
         </div>
+        <svg viewbox="0 0 300 300" width="300" height="300">
+            <line x1=100 y1=100 x2=200 y2=200 stroke="black"></line>
+        </svg>
     </div>
 </template>
 
@@ -24,7 +28,7 @@ export default{
     name: "MindMapDraw",
     props: {},
     data: () => ({
-        isCreateNode:false
+        isCreateNode:false,
     }),
     components: {
         MindMapNode
@@ -32,7 +36,7 @@ export default{
     methods:{
         mouseDoubleClick: function(){
             //コンポーネントを生成する
-            var Component = createApp(MindMapNode);
+            const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
             //wrapperのタグ内に生成したコンポーネントを入れる。

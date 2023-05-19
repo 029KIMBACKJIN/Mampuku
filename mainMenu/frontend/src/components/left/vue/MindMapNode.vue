@@ -77,6 +77,9 @@ export default{
         mouseLeave:function(){
             this.TaskNode.clicking = false;
             this.TaskNode.taskName = "離した";
+        },
+        getTaskName:function(){
+            return this.TaskNode.taskName;
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div class = "MindMap">
-        <h1>マインドマップ</h1>
+        <h1>マインドマップ(ダブルクリックで生成(仮))</h1>
         <div class = "MindMapDrawArea">
             <MindMapDraw/>
         </div>
