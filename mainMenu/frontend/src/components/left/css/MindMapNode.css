@@ -1,0 +1,10 @@
+
+#circle{
+    display: inline-block;
+    width: 100px;  /*幅*/
+    height: 100px;  /*高さ*/
+    border-radius: 50%;  /*角の丸み*/
+    background: skyblue;
+    text-align:center;
+    line-height: 80px;
+}

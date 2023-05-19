@@ -5,5 +5,6 @@ module.exports = defineConfig({
   devServer:{
     port:8080,
     proxy:'http://localhost:3000'
-  }
+  },
+  outputDir:"../backend/public"
 })
