@@ -9,9 +9,6 @@
         <div v-show="false">
             <MindMapNode/>
         </div>
-        <svg viewbox="0 0 300 300" width="300" height="300">
-            <line x1=100 y1=100 x2=200 y2=200 stroke="black"></line>
-        </svg>
     </div>
 </template>
 
@@ -29,6 +26,7 @@ export default{
     props: {},
     data: () => ({
         isCreateNode:false,
+        nodes:[]
     }),
     components: {
         MindMapNode
@@ -41,6 +39,24 @@ export default{
             const wrapper = document.createElement("div");
             //wrapperのタグ内に生成したコンポーネントを入れる。
             Component.mount(wrapper);
+
+            //データベースから親ノードのidと、タスク名をタスク作成画面の命令から取り出して、idとnodesの添え字が一致するものを探す
+            //var ParentComponent = ;
+            //タスク作成画面から得た情報から、タスク名を取り出す
+            //var taskName = ;
+
+            //データベースに登録されているタスクのid, 名前を代入する。
+            /*
+            Component._instance.data.TaskNode.taskName = taskName;
+            Component._instance.data.TaskNode.id = nodes.length;
+            ParentComponent.id = nodes.length;
+            Component._instance.data.ParentNode.id = ParentComponent.id;
+            */
+
+            //データベースに親ノードの子ノード情報を更新する。
+            
+            this.nodes.push(Component._instance);
+            console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
             document.getElementById("MindMapDraw").appendChild(wrapper);
         },

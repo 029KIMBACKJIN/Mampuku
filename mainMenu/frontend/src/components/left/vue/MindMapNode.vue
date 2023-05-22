@@ -1,4 +1,5 @@
 <template>
+    <ParentLine  v-bind:x1="ParentNode.x" v-bind:y1="ParentNode.y" v-bind:x2="TaskNode.x" v-bind:y2="TaskNode.y"/>
     <button id = "circle" 
         v-bind:style="{
             transform: `translate(${TaskNode.x}px, ${TaskNode.y}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
@@ -11,14 +12,22 @@
         >
         {{ TaskNode.taskName }}
     </button>
+    <ChildLine v-bind:x1="TaskNode.x" v-bind:y1="TaskNode.y" v-bind:x2="ChildNode.x" v-bind:y2="ChildNode.y"/>
 </template>
 
 <script>
+import ParentLine from './Line.vue';
+import ChildLine from './Line.vue';
 
 export default{
     name: "MindMapNode",
     props: {},
     data: () => ({
+        ParentNode:{
+            id:-1,
+            x:0,
+            y:0
+        },
         TaskNode:{
             id:"circle",
             scX:2,
@@ -29,10 +38,16 @@ export default{
             height:100,
             taskName:"タスク名",        
             clicking:false
+        },
+        ChildNode:{
+            id:-1,
+            x:100,
+            y:0
         }
     }),
     components: {
-
+        ParentLine,
+        ChildLine
     },
     methods:{
         mouseDoubleClick: function(){
