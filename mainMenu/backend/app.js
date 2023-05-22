@@ -51,6 +51,12 @@ app.use(function(req, res, next) {
   next()
 })
 
+// DBとORM連携
+const db = require("./database/models");
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
+});
+
 //追加
 app.use('/img', express.static(__dirname + '/public/img/'));
 app.use('/css', express.static(__dirname + '/public/css/'));
