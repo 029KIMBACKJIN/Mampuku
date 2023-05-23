@@ -35,6 +35,7 @@ export default{
     },
     data:()=>({
         isTaskFormOpen : false,
+        isTaskCreatedSwitch: false,
         taskName:"",
         taskContent:"",
         deadline:null,
@@ -94,7 +95,9 @@ export default{
           alert(res.data);
           //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
           //createdFlagという名前でtrueというデータを親コンポーネントに渡す
-          this.$emit("createdFlag", true);
+          //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
+          this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
+          this.$emit("createdFlag", this.isTaskCreatedSwitch);
 
         }).catch((e) =>{
           alert(e);

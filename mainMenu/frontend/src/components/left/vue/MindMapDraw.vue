@@ -70,7 +70,6 @@ export default{
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
             document.getElementById("MindMapDraw").appendChild(wrapper);
-
         }
     },
     methods:{
