@@ -2,26 +2,26 @@
     <div class = "TaskAdd">
         <h1>タスク追加・編集</h1>
         <button @click="toggle()">Create Task</button>
-    </div>
+        <div class = "black-bg" v-if = "isTaskFormOpen == true">
+        <div class = "white-bg">
+          <form id = "task">
+            <p>task name</p>
+            <input type = "text" id = "taskName" name = "task name">
 
-    <div class = "black-bg" v-if = "isTaskFormOpen == true">
-      <div class = "white-bg">
-        <form id = "task">
-          <p>task name</p>
-          <input type = "text" id = "taskName" name = "task name">
+            <p>task contents</p>
+            <input type = "text" id = "taskContent" name = "task contents">
 
-          <p>task contents</p>
-          <input type = "text" id = "taskContent" name = "task contents">
+            <p>dead line</p>
+            <input type = "date" id = "deadLine" name = "dead line">
 
-          <p>dead line</p>
-          <input type = "date" id = "deadLine" name = "dead line">
-
-          <p>complelete</p>
-          <input type = "checkbox" id = "complelete" name = "complelete">
-        </form>
-        <button>Create Task</button>
+            <p>complelete</p>
+            <input type = "checkbox" id = "complelete" name = "complelete">
+          </form>
+          <button>Create Task</button>
+        </div>
       </div>
-    </div>
+  </div>
+
 </template>
 
 <script>
