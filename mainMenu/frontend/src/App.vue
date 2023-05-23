@@ -1,57 +1,30 @@
 <template>
-  <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-  <div class = "mainPage" >
-    <!--左側-->
-    <div class = "left">
-      <div class = "Title">
-        <TitleLogo/>
-      </div>
-      <div class = "MenuBar">
-        <MenuBar/>
-      </div>
-      <div class = "MindMap">
-        <MindMap/>        
-      </div>
-    </div>
-    <!--右側-->
-    <div class = "right">
-      <div class = "Account">
-        <AccountSet/>
-      </div>
-      <div class = "Calender">
-        <CalenderDate/>
-      </div>  
-      <div class = "TaskAdd">
-        <TaskAdd/>        
-      </div>
-    </div>
-  </div>
-    
+  <nav>
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
+  </nav>
+  <router-view/>
 </template>
 
-<script>
-//コンポーネントをimportする
-//import HelloWorld from './components/HelloWorld.vue'
-import TitleLogo from './components/left/vue/Title.vue'
-import MenuBar from './components/left/vue/MenuBar.vue'
-import MindMap from './components/left/vue/MindMap.vue'
-import AccountSet from './components/right/vue/AccountSet.vue'
-import CalenderDate from './components/right/vue/Calender.vue'
-import TaskAdd from './components/right/vue/TaskAdd.vue'
-
-//componentsに追加することで、上記のtemplateタグで表示できる？
-export default {
-  name: 'App',
-  components: {
-    //HelloWorld,
-    TitleLogo,
-    MenuBar,
-    MindMap,
-    AccountSet,
-    CalenderDate,
-    TaskAdd
-  }
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
-</script>
 
-<style src="./app.css"></style>
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
+}
+</style>

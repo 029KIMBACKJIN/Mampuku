@@ -1,0 +1,78 @@
+<template>
+    <div>
+      <h2>SignIn</h2>
+      <form @submit.prevent="signIn">
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" v-model="email" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" v-model="password" required />
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <button @click="logout">logout</button>
+
+      <button @click="checkAccount">確認</button>
+      <div v-if="userMail">
+        <p>ログイン済みです</p>
+        <p>{{ userMail }}</p>
+      </div>
+      <div v-else>
+        <p>ログインしてない</p>
+      </div>
+    </div>
+  </template>
+  <script>
+  import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+  
+  export default {
+    data() {
+      return {
+        email: "",
+        password: "",
+        userMail: "",
+      };
+    },
+    methods: {
+      checkAccount() {
+        console.log("check");
+        const user = JSON.parse(sessionStorage.getItem("currentUser"));
+        if (user) {
+          console.log("ログイン済み");
+          this.userMail = user.email;
+          console.log(this.userMail);
+        } else {
+          console.log("ログインしてない");
+        }
+      },
+      signIn() {
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, this.email, this.password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user);
+            sessionStorage.setItem("currentUser", JSON.stringify(user));
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+          });
+      },
+      logout(){
+        const auth = getAuth();
+        signOut(auth).then(() => {
+        // Sign-out successful.
+        sessionStorage.removeItem("currentUser");
+        this.userMail = "";
+        }).catch((error) => {
+        // An error happened.
+        console.log(error);
+        });
+      }
+    },
+  };
+  </script> 
+  
