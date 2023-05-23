@@ -56,6 +56,13 @@ export default{
             //データベースに親ノードの子ノード情報を更新する。
             
             this.nodes.push(Component._instance);
+
+            if(this.nodes.length >= 2){
+                this.nodes[1].data.ParentNode.node = this.nodes[0];
+                this.nodes[0].data.ChildNode.node = this.nodes[1];
+                console.log("親ノードと子ノードの情報取得（仮）");
+            }
+
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
             document.getElementById("MindMapDraw").appendChild(wrapper);

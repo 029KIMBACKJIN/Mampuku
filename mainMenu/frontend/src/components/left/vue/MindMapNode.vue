@@ -24,7 +24,7 @@ export default{
     props: {},
     data: () => ({
         ParentNode:{
-            id:-1,
+            node:null,
             x:0,
             y:0
         },
@@ -40,7 +40,7 @@ export default{
             clicking:false
         },
         ChildNode:{
-            id:-1,
+            node:null,
             x:100,
             y:0
         }
@@ -87,6 +87,19 @@ export default{
                 //マウスの移動量で計算
                 this.TaskNode.x += e.movementX;
                 this.TaskNode.y += e.movementY;
+
+                if(this.ParentNode.node != null){
+                    this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
+                    this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
+                }
+                if(this.ChildNode.node != null){
+                    this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
+                    this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
+                }
+
+                console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
+                console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
+                console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
             }
         },
         mouseLeave:function(){
