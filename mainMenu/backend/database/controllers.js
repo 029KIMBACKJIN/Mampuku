@@ -1,4 +1,5 @@
-const db = require("../models");
+const db = require("./models");
+//テーブルモデルを取り出す。Tutorialとなっているが、tasksテーブルと思っていい
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 
@@ -13,16 +14,30 @@ exports.create = (req, res) => {
     }
   
     // Create a Tutorial
+    /*
     const tutorial = {
       title: req.body.title,
       description: req.body.description,
       published: req.body.published ? req.body.published : false
     };
-  
+    */
+    const task = {
+      //左側の名前は、model.jsのカラム名と一致している必要がある。
+      title: req.body.title,
+      contents: req.body.contents,  
+      deadline: req.body.deadline,
+      complelte: req.body.complete
+    }
     // Save Tutorial in the database
-    Tutorial.create(tutorial)
+    Tutorial.create(task)
       .then(data => {
-        res.send(data);
+        //res.send(data);
+        res.send("データを登録しました。\n登録内容" + 
+        "\nタイトル：" + data.title +
+        "\n内容：" + data.contents + 
+        "\n締め切り日：" + data.deadline +  
+        "\n達成状況：" + (data.complete ?"達成":"未達成")
+      );
       })
       .catch(err => {
         res.status(500).send({
@@ -37,6 +52,7 @@ exports.findAll = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   
+    //{内に、select文などのsql文を記載すれば取れるはず？}
     Tutorial.findAll({ where: condition })
       .then(data => {
         res.send(data);

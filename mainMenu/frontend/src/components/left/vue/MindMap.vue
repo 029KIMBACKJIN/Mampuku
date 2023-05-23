@@ -2,7 +2,7 @@
     <div class = "MindMap">
         <h1>マインドマップ(ダブルクリックで生成(仮))</h1>
         <div class = "MindMapDrawArea">
-            <MindMapDraw/>
+            <MindMapDraw :isTaskCreated="isTaskCreated"/>
         </div>
     </div>
 </template>
@@ -14,7 +14,7 @@ import MindMapDraw from './MindMapDraw.vue'
 export default{
     name:"MindMap",
     props:{
-
+        isTaskCreated:Boolean
     },
     data:()=>({
 

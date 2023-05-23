@@ -18,6 +18,7 @@
 <script>
 import ParentLine from './Line.vue';
 import ChildLine from './Line.vue';
+import axios from 'axios';
 
 export default{
     name: "MindMapNode",
@@ -52,6 +53,17 @@ export default{
     methods:{
         mouseDoubleClick: function(){
             this.TaskNode.taskName = "ノードでダブルクリックした";
+            //データを送りたいときはpost
+            axios.post("/MindMap/doubleClick", {
+                title:"タスク名"
+            })
+            .then((res) => {
+                alert(res.data.title);
+            })
+            .catch((e)=>{
+                alert(e);
+            })
+
             /*
             this.TaskNode.taskName = "ダブルクリックした";
             //要素を複製する処理(idを引数に入れる)
@@ -64,13 +76,6 @@ export default{
 
             //htmlに挿入
             circle.after(clone_circle);
-            axios.get("/MindMap/doubleClick")
-            .then((res) => {
-                alert(res.data);
-            })
-            .catch((e)=>{
-                alert(e);
-            })
             */
         },
         mouseClickUp:function(){

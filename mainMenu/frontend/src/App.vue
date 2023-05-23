@@ -10,7 +10,7 @@
         <MenuBar/>
       </div>
       <div class = "MindMap">
-        <MindMap/>        
+        <MindMap :isTaskCreated="isTaskCreated"/>        
       </div>
     </div>
     <!--右側-->
@@ -22,7 +22,7 @@
         <CalenderDate/>
       </div>  
       <div class = "TaskAdd">
-        <TaskAdd/>        
+        <TaskAdd v-on:createdFlag ="sendToMindMapDraw" />        
       </div>
     </div>
   </div>
@@ -42,6 +42,9 @@ import TaskAdd from './components/right/vue/TaskAdd.vue'
 //componentsに追加することで、上記のtemplateタグで表示できる？
 export default {
   name: 'App',
+  data: ()=>({
+    isTaskCreated:false
+  }),
   components: {
     //HelloWorld,
     TitleLogo,
@@ -50,6 +53,12 @@ export default {
     AccountSet,
     CalenderDate,
     TaskAdd
+  },
+  methods:{
+    sendToMindMapDraw:function(event){
+      console.log(event + "のデータをTaskAddから受け取りました");
+      this.isTaskCreated = event;
+    }
   }
 }
 </script>

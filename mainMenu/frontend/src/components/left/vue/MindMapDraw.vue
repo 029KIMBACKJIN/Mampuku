@@ -23,7 +23,9 @@ import { createApp } from "vue"
 //v-if:isCreateNodeで発火する。
 export default{
     name: "MindMapDraw",
-    props: {},
+    props: {
+        isTaskCreated:Boolean
+    },
     data: () => ({
         isCreateNode:false,
         nodes:[]
@@ -31,8 +33,10 @@ export default{
     components: {
         MindMapNode
     },
-    methods:{
-        mouseDoubleClick: function(){
+    watch:{
+        isTaskCreated:function(){
+            console.log("タスクが作成されました！！！");
+
             //コンポーネントを生成する
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
@@ -66,6 +70,11 @@ export default{
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
             document.getElementById("MindMapDraw").appendChild(wrapper);
+
+        }
+    },
+    methods:{
+        mouseDoubleClick: function(){
         },
         mouseClickUp:function(){
         }

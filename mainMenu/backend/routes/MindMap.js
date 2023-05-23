@@ -1,8 +1,15 @@
+
 const express = require('express');
+const dbController = require('../database/controllers');
 const router = express.Router();
 
-router.get("/doubleClick", function(req, res){
-    res.send("複製されたと思うが、複製機能は仮で実装しているため、本実装では別のところから呼び出す");
+//送信されたデータを受け取る。
+router.post("/doubleClick", function(req, res){
+    //req.body.フロントエンド側で送ったデータ名で、中身を取り出せる！
+    console.log(req.params, req.body);
+    //データベースに登録する
+    dbController.create(req, res);
+    //res.send(result);
 })
 
 module.exports = router;
