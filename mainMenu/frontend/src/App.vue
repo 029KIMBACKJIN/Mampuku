@@ -1,4 +1,5 @@
 <template>
+
   <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
   <div class = "mainPage" >
     <!--左側-->
@@ -30,50 +31,72 @@
 </template>
 
 <script>
-//コンポーネントをimportする
-//import HelloWorld from './components/HelloWorld.vue'
-import TitleLogo from './components/left/vue/Title.vue'
-import MenuBar from './components/left/vue/MenuBar.vue'
-import MindMap from './components/left/vue/MindMap.vue'
-import AccountSet from './components/right/vue/AccountSet.vue'
-import CalenderDate from './components/right/vue/Calender.vue'
-import TaskAdd from './components/right/vue/TaskAdd.vue'
+  //コンポーネントをimportする
+  //import HelloWorld from './components/HelloWorld.vue'
+  import TitleLogo from './components/left/vue/Title.vue'
+  import MenuBar from './components/left/vue/MenuBar.vue'
+  import MindMap from './components/left/vue/MindMap.vue'
+  import AccountSet from './components/right/vue/AccountSet.vue'
+  import CalenderDate from './components/right/vue/Calender.vue'
+  import TaskAdd from './components/right/vue/TaskAdd.vue'
 
-//componentsに追加することで、上記のtemplateタグで表示できる？
-export default {
-  name: 'App',
-  data: ()=>({
-    isTaskCreated:false,
-    resDatas:{}
-  }),
-  components: {
-    //HelloWorld,
-    TitleLogo,
-    MenuBar,
-    MindMap,
-    AccountSet,
-    CalenderDate,
-    TaskAdd
-  },
-  methods:{
-    sendToMindMapDraw:function(event){
-      console.log(event + "のデータをTaskAddから受け取りました");
-      this.isTaskCreated = event;
+  //componentsに追加することで、上記のtemplateタグで表示できる？
+  export default {
+    name: 'App',
+    data: ()=>({
+      isTaskCreated:false,
+      resDatas:{}
+    }),
+    components: {
+      //HelloWorld,
+      TitleLogo,
+      MenuBar,
+      MindMap,
+      AccountSet,
+      CalenderDate,
+      TaskAdd
     },
-    sendToMindMapDraw2:function(event){
-      console.log("MindMapDrawに送るデータたち\n" + 
-      event.id + "\n" + 
-      event.title + "\n" + 
-      event.contents + "\n" + 
-      event.deadline + "\n" + 
-      event.complete + "\n" + 
-      event.parentId + "\n" + 
-      event.childId );
+    methods:{
+      sendToMindMapDraw:function(event){
+        console.log(event + "のデータをTaskAddから受け取りました");
+        this.isTaskCreated = event;
+      },
+      sendToMindMapDraw2:function(event){
+        console.log("MindMapDrawに送るデータたち\n" + 
+        event.id + "\n" + 
+        event.title + "\n" + 
+        event.contents + "\n" + 
+        event.deadline + "\n" + 
+        event.complete + "\n" + 
+        event.parentId + "\n" + 
+        event.childId );
 
-      this.resDatas = event;
+        this.resDatas = event;
+      }
     }
   }
-}
 </script>
 
-<style src="./app.css"></style>
+<style>
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+
+  }
+
+  nav {
+    padding: 30px;
+  }
+
+  nav a {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  nav a.router-link-exact-active {
+    color: #42b983;
+  }
+</style>
