@@ -52,9 +52,11 @@ export default{
     },
     methods:{
         mouseDoubleClick: function(){
-            this.TaskNode.taskName = "ノードでダブルクリックした";
+            //this.TaskNode.taskName = "ノードでダブルクリックした";
             //データを送りたいときはpost
-            axios.get("/MindMap/doubleClick")
+            axios.post("/MindMap/doubleClick", {
+
+            })
             .then((res) => {
                 alert(res.data.title);
             })
@@ -77,16 +79,16 @@ export default{
             */
         },
         mouseClickUp:function(){
-            this.TaskNode.taskName = "離した";
+            //this.TaskNode.taskName = "離した";
             this.TaskNode.clicking = false;
         },
         mouseClickDown:function(){
-            this.TaskNode.taskName = "押した";
+            //this.TaskNode.taskName = "押した";
             this.TaskNode.clicking = true;
         },
         mouseDragging:function(e){
             if(this.TaskNode.clicking){
-                this.TaskNode.taskName = "(X:" + e.movementX + ", Y:" + e.movementY + ")";
+                //this.TaskNode.taskName = "(X:" + e.movementX + ", Y:" + e.movementY + ")";
                 //マウスの移動量で計算
                 this.TaskNode.x += e.movementX;
                 this.TaskNode.y += e.movementY;
@@ -107,7 +109,7 @@ export default{
         },
         mouseLeave:function(){
             this.TaskNode.clicking = false;
-            this.TaskNode.taskName = "離した";
+            //this.TaskNode.taskName = "離した";
         },
         getTaskName:function(){
             return this.TaskNode.taskName;

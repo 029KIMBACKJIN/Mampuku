@@ -24,7 +24,8 @@ import { createApp } from "vue"
 export default{
     name: "MindMapDraw",
     props: {
-        isTaskCreated:Boolean
+        isTaskCreated:Boolean,
+        resDatas:Object
     },
     data: () => ({
         isCreateNode:false,
@@ -36,6 +37,14 @@ export default{
     watch:{
         isTaskCreated:function(){
             console.log("タスクが作成されました！！！");
+            console.log("到着データ\n" + 
+            this.resDatas.id + "\n" + 
+            this.resDatas.title + "\n" + 
+            this.resDatas.contents + "\n" + 
+            this.resDatas.deadline + "\n" + 
+            this.resDatas.complete + "\n" + 
+            this.resDatas.parentId + "\n" + 
+            this.resDatas.childId );
 
             //コンポーネントを生成する
             const Component = createApp(MindMapNode);
@@ -50,12 +59,10 @@ export default{
             //var taskName = ;
 
             //データベースに登録されているタスクのid, 名前を代入する。
-            /*
-            Component._instance.data.TaskNode.taskName = taskName;
-            Component._instance.data.TaskNode.id = nodes.length;
-            ParentComponent.id = nodes.length;
-            Component._instance.data.ParentNode.id = ParentComponent.id;
-            */
+            Component._instance.data.TaskNode.id = this.resDatas.id;
+            Component._instance.data.TaskNode.taskName = this.resDatas.title;
+            Component._instance.data.ParentNode.id = this.resDatas.parentId;
+            Component._instance.data.ChildNode.id = this.resDatas.childId;
             //データベースに親ノードの子ノード情報を更新する。
             
             this.nodes.push(Component._instance);

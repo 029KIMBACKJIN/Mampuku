@@ -23,21 +23,19 @@ exports.create = (req, res) => {
     */
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
+      id: req.body.id,
       title: req.body.title,
       contents: req.body.contents,  
       deadline: req.body.deadline,
-      complelte: req.body.complete
+      complelte: req.body.complete,
+      parentId: -1,   //不明
+      childId: -1    //不明
     }
     // Save Tutorial in the database
     Tutorial.create(task)
       .then(data => {
         //res.send(data);
-        res.send("データを登録しました。\n登録内容" + 
-        "\nタイトル：" + data.title +
-        "\n内容：" + data.contents + 
-        "\n締め切り日：" + data.deadline +  
-        "\n達成状況：" + (data.complete ?"達成":"未達成")
-      );
+        res.send(data);
       })
       .catch(err => {
         res.status(500).send({
