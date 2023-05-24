@@ -1,6 +1,6 @@
 const db = require("./models");
 //テーブルモデルを取り出す。Tutorialとなっているが、tasksテーブルと思っていい
-const Tutorial = db.tutorials;
+const tasks = db.task_db;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Tutorial
@@ -32,7 +32,7 @@ exports.create = (req, res) => {
       childId: -1    //不明
     }
     // Save Tutorial in the database
-    Tutorial.create(task)
+    tasks.create(task)
       .then(data => {
         //res.send(data);
         res.send(data);

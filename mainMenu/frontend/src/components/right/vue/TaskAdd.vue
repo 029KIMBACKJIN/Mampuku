@@ -1,7 +1,7 @@
 <template>
     <div class = "TaskAdd">
         <h1>タスク追加・編集</h1>
-        <button @click="toggle()">Create Task</button>
+        <button @click="clickCreateTask()">Create Task</button>
         <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
@@ -18,7 +18,7 @@
             <p>complelete</p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-          <button v-on:click="createTask">Create Task</button>
+          <!-- <button v-on:click="createTask">Create Task</button> -->
         </div>
       </div>
   </div>
@@ -94,11 +94,11 @@ export default{
           complete:this.complete
         }).then((res) =>{
           //レスポンスの結果を表示
-          alert("データを登録しました。\n登録内容" + 
-        "\nタイトル：" + res.data.title +
-        "\n内容：" + res.data.contents + 
-        "\n締め切り日：" + res.data.deadline +  
-        "\n達成状況：" + (res.data.complete ?"達成":"未達成"));
+                alert("データを登録しました。\n登録内容" + 
+              "\nタイトル：" + res.data.title +
+              "\n内容：" + res.data.contents + 
+              "\n締め切り日：" + res.data.deadline +  
+              "\n達成状況：" + (res.data.complete ?"達成":"未達成"));
           //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
           //createdFlagという名前でtrueというデータを親コンポーネントに渡す
           //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
@@ -118,6 +118,14 @@ export default{
         }).catch((e) =>{
           alert(e);
         })
+      },
+      clickCreateTask : function() {
+        if(this.isTaskFormOpen == true) {
+          this.createTask();
+          this.toggle();
+        } else {
+          this.toggle();
+        }
       }
     }
 }

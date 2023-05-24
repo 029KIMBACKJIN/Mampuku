@@ -21,6 +21,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //turorialsに、テーブルモデルを代入する？
-db.tutorials = require("./model.js")(sequelize, Sequelize);
+db.task_db = require("./model.js")(sequelize, Sequelize);
 
 module.exports = db;
