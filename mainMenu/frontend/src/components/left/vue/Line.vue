@@ -1,7 +1,5 @@
 <template>
-    <svg viewbox="-300 -300 300 300" width="300" height="300">
-        <line v-bind:x1="x1" v-bind:y1="y1" v-bind:x2="x2" v-bind:y2="y2" stroke="black"></line>
-    </svg>    
+    <line v-bind:x1="x1" v-bind:y1="y1" v-bind:x2="x2" v-bind:y2="y2" stroke="black"></line>
 </template>
 <script>
 

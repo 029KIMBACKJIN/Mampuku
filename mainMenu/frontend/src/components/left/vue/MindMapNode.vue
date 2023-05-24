@@ -1,5 +1,7 @@
 <template>
+    <!--
     <ParentLine  v-bind:x1="ParentNode.x" v-bind:y1="ParentNode.y" v-bind:x2="TaskNode.x" v-bind:y2="TaskNode.y"/>
+    -->
     <button id = "circle" 
         v-bind:style="{
             transform: `translate(${TaskNode.x}px, ${TaskNode.y}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
@@ -12,12 +14,12 @@
         >
         {{ TaskNode.taskName }}
     </button>
+    <!--
     <ChildLine v-bind:x1="TaskNode.x" v-bind:y1="TaskNode.y" v-bind:x2="ChildNode.x" v-bind:y2="ChildNode.y"/>
+    -->
 </template>
 
 <script>
-import ParentLine from './Line.vue';
-import ChildLine from './Line.vue';
 import axios from 'axios';
 
 export default{
@@ -47,8 +49,6 @@ export default{
         }
     }),
     components: {
-        ParentLine,
-        ChildLine
     },
     methods:{
         mouseDoubleClick: function(){
@@ -103,6 +103,8 @@ export default{
                     this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
                     this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
                 }
+                //親コンポーネントにデータを送る
+                this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
 
                 console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
                 console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");

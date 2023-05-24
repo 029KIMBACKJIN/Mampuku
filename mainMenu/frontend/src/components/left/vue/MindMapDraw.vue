@@ -4,11 +4,15 @@
     -->
     <div id = "MindMapDraw" 
     v-on:dblclick="mouseDoubleClick($event)"
+    v-on:position="setLinePosition"
     >
+        <!--ここにsvgタグを動的に定義して生成-->
+
         <!--このノードは見えなくする-->
         <div v-show="false">
-            <MindMapNode/>
+            <MindMapNode />
         </div>
+    
     </div>
 </template>
 
@@ -25,7 +29,9 @@ export default{
     name: "MindMapDraw",
     props: {
         isTaskCreated:Boolean,
-        resDatas:Object
+        resDatas:Object,
+        width:{type:Number,default:500},
+        height:{type:Number,default:500}
     },
     data: () => ({
         isCreateNode:false,
@@ -34,6 +40,18 @@ export default{
     components: {
         MindMapNode
     },
+    mounted(){
+        console.log("ページが読み込まれました");
+        //svgタグを定義
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute("id", "canvas");
+        svg.setAttribute("width", this.width);
+        svg.setAttribute("height", this.height);
+        svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
+        svg.setAttribute("style", "background-color:#FFFFFF");
+        document.getElementById("MindMapDraw").appendChild(svg);     
+    }
+    ,
     watch:{
         isTaskCreated:function(){
             console.log("タスクが作成されました！！！");
@@ -64,7 +82,7 @@ export default{
             Component._instance.data.ParentNode.id = this.resDatas.parentId;
             Component._instance.data.ChildNode.id = this.resDatas.childId;
             //データベースに親ノードの子ノード情報を更新する。
-            
+
             this.nodes.push(Component._instance);
 
             if(this.nodes.length >= 2){
@@ -72,6 +90,18 @@ export default{
                 this.nodes[0].data.ChildNode.node = this.nodes[1];
                 console.log("親ノードと子ノードの情報取得（仮）");
             }
+
+            //lineタグを生成
+            const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line1.setAttribute("id", "line1");
+            line1.setAttribute("x1", Component._instance.data.TaskNode.x);
+            line1.setAttribute("y1", Component._instance.data.TaskNode.y);
+            line1.setAttribute("x2", Component._instance.data.ParentNode.x);
+            line1.setAttribute("y2", Component._instance.data.ParentNode.y);
+            line1.setAttribute('stroke', '#008080');
+            line1.setAttribute('stroke-width', 5);
+
+            document.getElementById("canvas").appendChild(line1);
 
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
@@ -82,6 +112,9 @@ export default{
         mouseDoubleClick: function(){
         },
         mouseClickUp:function(){
+        },
+        setLinePosition:function(event){
+            console.log(event);
         }
     }
 }

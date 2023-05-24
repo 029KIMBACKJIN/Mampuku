@@ -66,7 +66,7 @@ exports.findAll = (req, res) => {
 // Find a single Tutorial with an id
 exports.findOne = (req, res) => {
     const id = req.body.id;
-  
+
     Tutorial.findByPk(id)
       .then(data => {
         if (data) {
@@ -82,24 +82,28 @@ exports.findOne = (req, res) => {
           message: "Error retrieving Tutorial with id=" + id
         });
       });
+    return datas;
   };
 
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
-  
-    Tutorial.update(req.body, {
+    const id = req.body.id;
+
+    const task = {
+      //左側の名前は、model.jsのカラム名と一致している必要がある。
+      id: req.body.id,
+      title: req.body.title + " updated"
+    }
+
+    //idが一致するものを修正する。
+    Tutorial.update(task, {
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "Tutorial was updated successfully."
-          });
+          res.send("更新に成功");
         } else {
-          res.send({
-            message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
-          });
+          res.send("更新に失敗しました！");
         }
       })
       .catch(err => {

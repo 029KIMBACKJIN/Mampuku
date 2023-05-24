@@ -9,8 +9,6 @@ router.post("/doubleClick", function(req, res){
     console.log(req.params, req.body);
     //データベースに登録する
     dbController.findOne(req, res);
-
-    //res.send(result);
 })
 
 module.exports = router;
