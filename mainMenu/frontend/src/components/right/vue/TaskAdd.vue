@@ -1,7 +1,7 @@
 <template>
     <div class = "TaskAdd">
         <h1>タスク追加・編集</h1>
-        <button @click="toggle()">Create Task</button>
+        <button @click="clickCreateTask()">Create Task</button>
         <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
@@ -18,7 +18,7 @@
             <p>complelete</p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-          <button v-on:click="createTask">Create Task</button>
+          <!-- <button v-on:click="createTask">Create Task</button> -->
         </div>
       </div>
   </div>
@@ -118,6 +118,14 @@ export default{
         }).catch((e) =>{
           alert(e);
         })
+      },
+      clickCreateTask : function() {
+        if(this.isTaskFormOpen == true) {
+          this.createTask();
+          this.toggle();
+        } else {
+          this.toggle();
+        }
       }
     }
 }
