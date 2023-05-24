@@ -56,7 +56,6 @@ export default{
             ParentComponent.id = nodes.length;
             Component._instance.data.ParentNode.id = ParentComponent.id;
             */
-
             //データベースに親ノードの子ノード情報を更新する。
             
             this.nodes.push(Component._instance);

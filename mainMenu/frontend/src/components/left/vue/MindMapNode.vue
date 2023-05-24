@@ -54,9 +54,7 @@ export default{
         mouseDoubleClick: function(){
             this.TaskNode.taskName = "ノードでダブルクリックした";
             //データを送りたいときはpost
-            axios.post("/MindMap/doubleClick", {
-                title:"タスク名"
-            })
+            axios.get("/MindMap/doubleClick")
             .then((res) => {
                 alert(res.data.title);
             })
