@@ -4,7 +4,7 @@
     -->
     <button id = "circle" 
         v-bind:style="{
-            transform: `translate(${TaskNode.x}px, ${TaskNode.y}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
+            transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
         }"    
         v-on:dblclick="mouseDoubleClick"
         v-on:mousedown="mouseClickDown"
@@ -37,10 +37,12 @@ export default{
             scY:2,
             x:100,
             y:100,
-            width:100,
-            height:100,
+            drawWidth:100,
+            drawHeight:100,
             taskName:"タスク名",        
-            clicking:false
+            clicking:false,
+            line1:null,
+            line2:null
         },
         ChildNode:{
             node:null,
@@ -104,7 +106,15 @@ export default{
                     this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
                 }
                 //親コンポーネントにデータを送る
-                this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
+                //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
+                this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
+                this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
+                this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
+                this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
+                this.TaskNode.line2.setAttribute("x1", this.TaskNode.x);
+                this.TaskNode.line2.setAttribute("y1", this.TaskNode.y);
+                this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
+                this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
 
                 console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
                 console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");

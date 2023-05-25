@@ -30,8 +30,8 @@ export default{
     props: {
         isTaskCreated:Boolean,
         resDatas:Object,
-        width:{type:Number,default:500},
-        height:{type:Number,default:500}
+        width:{type:Number,default:10000},
+        height:{type:Number,default:10000}
     },
     data: () => ({
         isCreateNode:false,
@@ -48,7 +48,7 @@ export default{
         svg.setAttribute("width", this.width);
         svg.setAttribute("height", this.height);
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
-        svg.setAttribute("style", "background-color:#FFFFFF");
+        svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);     
     }
     ,
@@ -75,22 +75,6 @@ export default{
             //var ParentComponent = ;
             //タスク作成画面から得た情報から、タスク名を取り出す
             //var taskName = ;
-
-            //データベースに登録されているタスクのid, 名前を代入する。
-            Component._instance.data.TaskNode.id = this.resDatas.id;
-            Component._instance.data.TaskNode.taskName = this.resDatas.title;
-            Component._instance.data.ParentNode.id = this.resDatas.parentId;
-            Component._instance.data.ChildNode.id = this.resDatas.childId;
-            //データベースに親ノードの子ノード情報を更新する。
-
-            this.nodes.push(Component._instance);
-
-            if(this.nodes.length >= 2){
-                this.nodes[1].data.ParentNode.node = this.nodes[0];
-                this.nodes[0].data.ChildNode.node = this.nodes[1];
-                console.log("親ノードと子ノードの情報取得（仮）");
-            }
-
             //lineタグを生成
             const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line1.setAttribute("id", "line1");
@@ -101,10 +85,40 @@ export default{
             line1.setAttribute('stroke', '#008080');
             line1.setAttribute('stroke-width', 5);
 
-            document.getElementById("canvas").appendChild(line1);
+            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line2.setAttribute("id", "line2");
+            line2.setAttribute("x1", Component._instance.data.TaskNode.x);
+            line2.setAttribute("y1", Component._instance.data.TaskNode.y);
+            line2.setAttribute("x2", Component._instance.data.ChildNode.x);
+            line2.setAttribute("y2", Component._instance.data.ChildNode.y);
+            line2.setAttribute('stroke', '#008080');
+            line2.setAttribute('stroke-width', 5);
+
+            //データベースに登録されているタスクのid, 名前を代入する。
+            Component._instance.data.TaskNode.id = this.resDatas.id;
+            Component._instance.data.TaskNode.taskName = this.resDatas.title;
+            Component._instance.data.ParentNode.id = this.resDatas.parentId;
+            Component._instance.data.ChildNode.id = this.resDatas.childId;
+            Component._instance.data.TaskNode.line1 = line1;
+            Component._instance.data.TaskNode.line2 = line2;
+            Component._instance.data.TaskNode.drawHeight = this.height;
+            //データベースに親ノードの子ノード情報を更新する。
+
+            this.nodes.push(Component._instance);
+
+            if(this.nodes.length >= 2){
+                this.nodes[1].data.ParentNode.node = this.nodes[0];
+                this.nodes[0].data.ChildNode.node = this.nodes[1];
+                console.log("親ノードと子ノードの情報取得（仮）");
+            }
+
 
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
+
+            document.getElementById("canvas").appendChild(line1);
+            document.getElementById("canvas").appendChild(line2);
+
             document.getElementById("MindMapDraw").appendChild(wrapper);
         }
     },
