@@ -1,7 +1,7 @@
 <template>
     <div class = "TaskAdd">
         <h1>タスク追加・編集</h1>
-        <button @click="clickCreateTask()">Create Task</button>
+        <button @click="retrieveWithId()">Create Task</button>
         <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
@@ -18,7 +18,6 @@
             <p>complelete</p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-          <!-- <button v-on:click="createTask">Create Task</button> -->
         </div>
       </div>
   </div>
@@ -122,6 +121,34 @@ export default{
       clickCreateTask : function() {
         if(this.isTaskFormOpen == true) {
           this.createTask();
+          this.toggle();
+        } else {
+          this.toggle();
+        }
+      },
+      retrieveWithId : function() {
+        if(this.isTaskFormOpen == true) {
+          axios.post("/TaskAdd/retrieve", {
+            id: this.taskName
+          }).then((res) =>{
+            console.log(res.data.title);
+            // alert("データを検索しました。\n検索結果" + 
+            //   "\nタイトル：" + res.data.title);
+            this.resDatas = {
+            id: res.data.id,
+            title: res.data.title,
+            contents: res.data.contents,
+            deadline: res.data.deadline,
+            complete: res.data.complelte,
+            parentId: res.data.parentId,
+            childId: res.data.childId
+          }
+          this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
+          this.$emit("createdFlag", this.isTaskCreatedSwitch);
+          this.$emit("resDatas", this.resDatas);
+          }).catch((e) =>{
+            alert(e);
+          })
           this.toggle();
         } else {
           this.toggle();

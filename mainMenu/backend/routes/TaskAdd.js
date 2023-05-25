@@ -9,5 +9,10 @@ app.post("/create", function(req, res){
     dbController.create(req, res);
 });
 
+app.post("/retrieve", function(req, res) {
+    //console.log(req.body);
+    dbController.findOne(req, res);
+});
+
 module.exports = app;
 

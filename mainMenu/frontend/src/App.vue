@@ -1,5 +1,4 @@
 <template>
-
   <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
   <div class = "mainPage" >
     <!--左側-->
