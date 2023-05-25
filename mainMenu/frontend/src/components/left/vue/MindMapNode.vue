@@ -35,8 +35,8 @@ export default{
             drawHeight:100,
             taskName:"タスク名",        
             clicking:false,
-            line1:null,
-            line2:null
+            line1:null,   //親ノードへの線
+            line2:null    //子ノードへの線
         },
         ChildNode:{
             node:null,
@@ -94,22 +94,35 @@ export default{
                 if(this.ParentNode.node != null){
                     this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
                     this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
+                    this.ParentNode.node.data.ChildNode.x = this.TaskNode.x;
+                    this.ParentNode.node.data.ChildNode.y = this.TaskNode.y;
                 }
                 if(this.ChildNode.node != null){
                     this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
                     this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
+                    this.ChildNode.node.data.ParentNode.x = this.TaskNode.x;
+                    this.ChildNode.node.data.ParentNode.y = this.TaskNode.y;
                 }
                 //親コンポーネントにデータを送る
                 //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
-                this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
-                this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
-                this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
-                this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
-                this.TaskNode.line2.setAttribute("x1", this.TaskNode.x);
-                this.TaskNode.line2.setAttribute("y1", this.TaskNode.y);
-                this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
-                this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
-
+                if(this.TaskNode.line1 != null){
+                    this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
+                    this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
+                    this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
+                    this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
+                    /*
+                    if(this.ParentNode.node.TaskNode.line2 != null){
+                        this.ParentNode.node.TaskNode.line2.setAttribute("x1", this.ParentNode.node.TaskNode.x);
+                        this.ParentNode.node.TaskNode.line2.setAttribute("y1", this.ParentNode.node.TaskNode.y);
+                    }
+                    */
+                }
+                if(this.TaskNode.line2 != null){
+                    this.TaskNode.line2.setAttribute("x1", this.TaskNode.x);
+                    this.TaskNode.line2.setAttribute("y1", this.TaskNode.y);
+                    this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
+                    this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
+                }
                 console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
                 console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
                 console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
