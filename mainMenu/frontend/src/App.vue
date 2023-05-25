@@ -25,6 +25,9 @@
       <div class = "TaskAdd">
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
+      <div class = "TaskEdit">
+        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
+      </div>
     </div>
   </div>    
 </template>
@@ -38,6 +41,7 @@
   import AccountSet from './components/right/vue/AccountSet.vue'
   import CalenderDate from './components/right/vue/Calender.vue'
   import TaskAdd from './components/right/vue/TaskAdd.vue'
+  import TaskEdit from './components/right/vue/TaskEdit.vue'
 
   //componentsに追加することで、上記のtemplateタグで表示できる？
   export default {
@@ -53,7 +57,8 @@
       MindMap,
       AccountSet,
       CalenderDate,
-      TaskAdd
+      TaskAdd,
+      TaskEdit
     },
     methods:{
       sendToMindMapDraw:function(event){

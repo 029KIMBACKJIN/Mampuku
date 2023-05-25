@@ -1,14 +1,8 @@
 <template>
-  <div class = "TaskAdd">
-      <h1>タスク追加</h1>
-      <!--
-        <button @click="clickCreateTask()">Create Task</button>
-      -->
-      <!--
+  <div class = "TaskEdit">
+      <h1>タスク編集</h1>
+      <button @click="clickCreateTask()">Edit Task</button>
       <div class = "black-bg" v-if = "isTaskFormOpen == true">
-      -->
-      <InputForm :isTaskFormOpen="false"/>
-      <div class = "black-bg" v-if = "isTaskFormOpen == false">
         <div class = "white-bg">
           <form id = "task">
             <p class="alert alert-danger d-flex align-items-center" role="alert">
@@ -31,7 +25,7 @@
             </p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-        <button v-on:click="createTask">タスク登録(Create Task)</button>
+        <button v-on:click="createTask">タスク登録(Edit Task)</button>
         </div>
       </div>
   </div>
@@ -42,7 +36,7 @@
 import axios from 'axios';
 
 export default{
-    name:"TaskAdd",
+    name:"TaskEdit",
     props:{
 
     },
@@ -99,7 +93,7 @@ export default{
       createTask: function() {
         //送信ボタンを押したとき
         //データを送りたい場合はpost（express側も）と書いてリクエストする
-        axios.post("/TaskAdd/create", {
+        axios.post("/TaskEdit/update", {
           //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
           title: this.taskName,
           contents:this.taskContent,
@@ -107,7 +101,7 @@ export default{
           complete:this.complete
         }).then((res) =>{
           //レスポンスの結果を表示
-                alert("データを登録しました。\n登録内容" + 
+                alert("データを変更しました。\n変更内容" + 
               "\nタイトル：" + res.data.title +
               "\n内容：" + res.data.contents + 
               "\n締め切り日：" + res.data.deadline +  
@@ -149,4 +143,4 @@ export default{
 }
 </script>
 
-<style src="../css/TaskAdd.css"></style>
+<style src="../css/TaskEdit.css"></style>
