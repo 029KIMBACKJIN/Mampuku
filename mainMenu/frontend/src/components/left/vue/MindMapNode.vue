@@ -1,7 +1,4 @@
 <template>
-    <!--
-    <ParentLine  v-bind:x1="ParentNode.x" v-bind:y1="ParentNode.y" v-bind:x2="TaskNode.x" v-bind:y2="TaskNode.y"/>
-    -->
     <button id = "circle" 
         v-bind:style="{
             transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
@@ -14,9 +11,6 @@
         >
         {{ TaskNode.taskName }}
     </button>
-    <!--
-    <ChildLine v-bind:x1="TaskNode.x" v-bind:y1="TaskNode.y" v-bind:x2="ChildNode.x" v-bind:y2="ChildNode.y"/>
-    -->
 </template>
 
 <script>
