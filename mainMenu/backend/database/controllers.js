@@ -62,13 +62,14 @@ exports.findAll = (req, res) => {
       });
   };
 
-// Find a single Tutorial with an id
+// フロントからIDをもらってDBで検索
 exports.findOne = (req, res) => {
+    // Axiosから送られたBodyを分析してIDをとる
     const id = req.body.id;
     tasks.findByPk(id)
       .then(task => {
         if (task) {
-          console.log(task);
+          // taskに検索された情報が入っている
           res.send(task);
         } else {
           res.status(404).send({

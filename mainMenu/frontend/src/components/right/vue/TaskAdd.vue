@@ -1,7 +1,7 @@
 <template>
     <div class = "TaskAdd">
         <h1>タスク追加・編集</h1>
-        <button @click="retrieveWithId()">Create Task</button>
+        <button @click="clickCreateTask()">Create Task</button>
         <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
@@ -40,7 +40,9 @@ export default{
         taskName:"",
         taskContent:"",
         deadline:null,
-        complete:false
+        complete:false,
+        parentId: "",
+        childId: ""
     }),
     computed:{
       //値の監視？
@@ -93,7 +95,7 @@ export default{
           complete:this.complete
         }).then((res) =>{
           //レスポンスの結果を表示
-                alert("データを登録しました。\n登録内容" + 
+              alert("データを登録しました。\n登録内容" + 
               "\nタイトル：" + res.data.title +
               "\n内容：" + res.data.contents + 
               "\n締め切り日：" + res.data.deadline +  
@@ -126,26 +128,16 @@ export default{
           this.toggle();
         }
       },
+      // DB操作確認のため仮で作ったFuntion
+      // Create Task ボタンを押したらTitleに入力した数字にてDBで検索
       retrieveWithId : function() {
         if(this.isTaskFormOpen == true) {
           axios.post("/TaskAdd/retrieve", {
             id: this.taskName
           }).then((res) =>{
+            //console.log(res.data.id);
             console.log(res.data.title);
-            // alert("データを検索しました。\n検索結果" + 
-            //   "\nタイトル：" + res.data.title);
-            this.resDatas = {
-            id: res.data.id,
-            title: res.data.title,
-            contents: res.data.contents,
-            deadline: res.data.deadline,
-            complete: res.data.complelte,
-            parentId: res.data.parentId,
-            childId: res.data.childId
-          }
-          this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
-          this.$emit("createdFlag", this.isTaskCreatedSwitch);
-          this.$emit("resDatas", this.resDatas);
+            console.log(res.data.contents);
           }).catch((e) =>{
             alert(e);
           })
