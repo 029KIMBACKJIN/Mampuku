@@ -10,6 +10,7 @@ var MenuBarRouter = require('./routes/MenuBar');
 var MindMapRouter = require('./routes/MindMap');
 var AccountSetRouter = require('./routes/AccountSet');
 var TaskAddRouter = require('./routes/TaskAdd');
+var TaskEditRouter = require('./routes/TaskEdit');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/MenuBar', MenuBarRouter);
 app.use('/MindMap', MindMapRouter);
 app.use('/AccountSet', AccountSetRouter);
 app.use("/TaskAdd", TaskAddRouter);
+app.use("/TaskEdit", TaskEditRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

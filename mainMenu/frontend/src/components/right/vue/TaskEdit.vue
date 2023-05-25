@@ -5,8 +5,14 @@
       <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
-            <p class="alert alert-danger d-flex align-items-center" role="alert">
-              ※タスク名(Task Name)
+            <p v-if="inputTaskName == ''" class="alert alert-danger d-flex align-items-center" role="alert">
+              <svg v-if="inputTaskName == ''" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+              </svg>
+              タスク名(Task Name)
+            </p>
+            <p v-else>
+              タスク名(Task Name)
             </p>
             <!--v-modelで変数の中身の変更をリアルタイムで監視する-->
             <input v-model="inputTaskName" type = "text" id = "taskName" name = "task name">
@@ -17,7 +23,15 @@
             </p>
             <input v-model="inputTaskContent" type = "text" id = "taskContent" name = "task contents">
 
-            <br><br><p class="alert alert-danger d-flex align-items-center" role="alert">※締め切り日(dead line)</p>
+            <br><br><p v-if="inputDeadLine==null" class="alert alert-danger d-flex align-items-center" role="alert">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+              </svg>
+              締め切り日(dead line)
+            </p>
+            <p v-else>
+              締め切り日(dead line)
+            </p>
             <input v-model="inputDeadLine" type = "date" id = "deadLine" name = "dead line">
 
             <br><br><p>
@@ -125,7 +139,7 @@ export default{
           //入力内容をクリアする
           this.taskName = "";
           this.taskContent = "";
-          this.deadline = "";
+          this.deadline = null;
           this.complete = false;
         }).catch((e) =>{
           alert(e);
