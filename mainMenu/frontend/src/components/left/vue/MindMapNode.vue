@@ -1,5 +1,6 @@
 <template>
-    <button id = "circle" 
+    <button id = "circle"
+        style="position: absolute;"
         v-bind:style="{
             transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
         }"    

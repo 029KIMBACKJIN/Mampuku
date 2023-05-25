@@ -3,6 +3,7 @@
         MindMapDraw内であればドラッグを有効にする。ドラッグ中に枠から出たら強制的にドラッグ解除
     -->
     <div id = "MindMapDraw" 
+    style="position: relative;"
     v-on:dblclick="mouseDoubleClick($event)"
     v-on:position="setLinePosition"
     >
