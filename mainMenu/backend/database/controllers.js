@@ -33,9 +33,8 @@ exports.create = (req, res) => {
     }
     // Save Tutorial in the database
     tasks.create(task)
-      .then(data => {
-        //res.send(data);
-        res.send(data);
+      .then(task => {
+        res.send(task);
       })
       .catch(err => {
         res.status(500).send({
@@ -47,13 +46,13 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+    const id = req.query.id;
+    var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
   
     //{内に、select文などのsql文を記載すれば取れるはず？}
-    Tutorial.findAll({ where: condition })
-      .then(data => {
-        res.send(data);
+    tasks.findAll({ where: condition })
+      .then(task => {
+        res.send(task);
       })
       .catch(err => {
         res.status(500).send({
@@ -63,26 +62,27 @@ exports.findAll = (req, res) => {
       });
   };
 
-// Find a single Tutorial with an id
+// フロントからIDをもらってDBで検索
 exports.findOne = (req, res) => {
+    // Axiosから送られたBodyを分析してIDをとる
     const id = req.body.id;
-
-    Tutorial.findByPk(id)
-      .then(data => {
-        if (data) {
-          res.send(data);
+    tasks.findByPk(id)
+      .then(task => {
+        if (task) {
+          // taskに検索された情報が入っている
+          res.send(task);
         } else {
           res.status(404).send({
-            message: `Cannot find Tutorial with id=${id}.`
+            message: `Cannot find task with id=${id}.`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error retrieving Tutorial with id=" + id
+          message: "Error retrieving task with id=" + id
         });
       });
-    return datas;
+    //return datas;
   };
 
 // Update a Tutorial by the id in the request

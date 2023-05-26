@@ -1,51 +1,23 @@
 <template>
-  <div class = "TaskAdd">
-      <h1>タスク追加</h1>
-      <!--
+    <div class = "TaskAdd">
+        <h1>タスク追加・編集</h1>
         <button @click="clickCreateTask()">Create Task</button>
-      -->
-      <!--
-      <div class = "black-bg" v-if = "isTaskFormOpen == true">
-      -->
-      <InputForm :isTaskFormOpen="false"/>
-      <div class = "black-bg" v-if = "isTaskFormOpen == false">
+        <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">
-            <p v-if="inputTaskName == ''" class="alert alert-danger d-flex align-items-center" role="alert">
-              <svg v-if="inputTaskName == ''" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-              </svg>
-              タスク名(Task Name)
-            </p>
-            <p v-else>
-              タスク名(Task Name)
-            </p>
+            <p>task name</p>
             <!--v-modelで変数の中身の変更をリアルタイムで監視する-->
             <input v-model="inputTaskName" type = "text" id = "taskName" name = "task name">
 
-            <br><br>
-            <p>
-              タスク内容(Task Contents)
-            </p>
+            <p>task contents</p>
             <input v-model="inputTaskContent" type = "text" id = "taskContent" name = "task contents">
 
-            <br><br><p v-if="inputDeadLine==null" class="alert alert-danger d-flex align-items-center" role="alert">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-              </svg>
-              締め切り日(dead line)
-            </p>
-            <p v-else>
-              締め切り日(dead line)
-            </p>
+            <p>dead line</p>
             <input v-model="inputDeadLine" type = "date" id = "deadLine" name = "dead line">
 
-            <br><br><p>
-              終了フラグ(complelete)
-            </p>
+            <p>complelete</p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-        <button v-on:click="createTask">タスク登録(Create Task)</button>
         </div>
       </div>
   </div>
@@ -68,7 +40,9 @@ export default{
         taskName:"",
         taskContent:"",
         deadline:null,
-        complete:false
+        complete:false,
+        parentId: "",
+        childId: ""
     }),
     computed:{
       //値の監視？
@@ -121,7 +95,7 @@ export default{
           complete:this.complete
         }).then((res) =>{
           //レスポンスの結果を表示
-                alert("データを登録しました。\n登録内容" + 
+              alert("データを登録しました。\n登録内容" + 
               "\nタイトル：" + res.data.title +
               "\n内容：" + res.data.contents + 
               "\n締め切り日：" + res.data.deadline +  
@@ -142,11 +116,6 @@ export default{
           this.$emit("createdFlag", this.isTaskCreatedSwitch);
           this.$emit("resDatas", this.resDatas);
 
-          //入力内容をクリアする
-          this.taskName = "";
-          this.taskContent = "";
-          this.deadline = null;
-          this.complete = false;
         }).catch((e) =>{
           alert(e);
         })
@@ -154,6 +123,24 @@ export default{
       clickCreateTask : function() {
         if(this.isTaskFormOpen == true) {
           this.createTask();
+          this.toggle();
+        } else {
+          this.toggle();
+        }
+      },
+      // DB操作確認のため仮で作ったFuntion
+      // Create Task ボタンを押したらTitleに入力した数字にてDBで検索
+      retrieveWithId : function() {
+        if(this.isTaskFormOpen == true) {
+          axios.post("/TaskAdd/retrieve", {
+            id: this.taskName
+          }).then((res) =>{
+            //console.log(res.data.id);
+            console.log(res.data.title);
+            console.log(res.data.contents);
+          }).catch((e) =>{
+            alert(e);
+          })
           this.toggle();
         } else {
           this.toggle();
