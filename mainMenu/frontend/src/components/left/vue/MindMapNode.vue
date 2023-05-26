@@ -19,7 +19,8 @@ import axios from 'axios';
 
 export default{
     name: "MindMapNode",
-    props: {},
+    props: {
+    },
     data: () => ({
         ParentNode:{
             node:null,
@@ -47,6 +48,9 @@ export default{
     }),
     components: {
     },
+    computed:{
+
+    },
     methods:{
         mouseDoubleClick: function(){
             //this.TaskNode.taskName = "ノードでダブルクリックした";
@@ -62,7 +66,6 @@ export default{
             .catch((e)=>{
                 alert(e);
             })
-
             /*
             this.TaskNode.taskName = "ダブルクリックした";
             //要素を複製する処理(idを引数に入れる)

@@ -10,7 +10,7 @@
         <MenuBar/>
       </div>
       <div class = "MindMap">
-        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"/>        
+        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:sendToEdit="sendToEdit"/>        
       </div>
     </div>
     <!--右側-->
@@ -75,6 +75,9 @@
         event.childId );
 
         this.resDatas = event;
+      },
+      sendToEdit:function(event){
+        console.log(event);
       }
     }
   }

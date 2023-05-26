@@ -48,7 +48,6 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
     const id = req.query.id;
     var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
-  
     //{内に、select文などのsql文を記載すれば取れるはず？}
     tasks.findAll({ where: condition })
       .then(task => {

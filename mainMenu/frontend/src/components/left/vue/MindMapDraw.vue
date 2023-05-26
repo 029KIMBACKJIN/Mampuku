@@ -20,6 +20,7 @@
 <script>
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
+import TaskEdit from '../../right/vue/TaskEdit.vue';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
 
@@ -69,6 +70,10 @@ export default{
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
+            wrapper.setAttribute("id", "node" + this.nodes.length);
+            //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
+            wrapper.setAttribute('v-on:dblclick', TaskEdit.methods.mouseDoubleClick);
+            //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
             Component.mount(wrapper);
 
@@ -142,7 +147,8 @@ export default{
         }
     },
     methods:{
-        mouseDoubleClick: function(){
+        mouseDoubleClick: function(event){
+            console.log("ダブルクリックした。データ：" + event.target.id);
         },
         mouseClickUp:function(){
         },
