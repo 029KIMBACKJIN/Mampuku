@@ -47,15 +47,22 @@ export default{
             taskName:"タスク名",        
             clicking:false,
             line1:null,   //親ノードへの線
-            line2:null    //子ノードへの線
+            line2:null,    //子ノードへの線
+            currentDate:null,  //現在時刻
+            intervalId:null
+
         },
         ChildNode:{
             node:null,
             x:100,
             y:0
-        }
+        },
     }),
     components: {
+    },
+    mounted(){
+        //1秒単位で現在時刻を更新する。
+        this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
     },
     methods:{
         mouseDoubleClick: function(){
@@ -116,8 +123,8 @@ export default{
             this.TaskNode.clicking = false;
             //this.TaskNode.taskName = "離した";
         },
-        getTaskName:function(){
-            console.log("get");
+        getCurrentDate:function(){
+            this.TaskNode.currentDate = new Date();
         }
     }
 }

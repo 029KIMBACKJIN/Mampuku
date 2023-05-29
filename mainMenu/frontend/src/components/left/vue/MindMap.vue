@@ -2,7 +2,7 @@
     <div class = "MindMap">
         <h1>マインドマップ</h1>
         <div class = "MindMapDrawArea">
-            <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas = "sendToEditDatas" :isTaskEdit="isTaskEdit"/>
+            <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas = "sendToEditDatas" :isTaskEdit="isTaskEdit" />
         </div>
     </div>
 </template>
