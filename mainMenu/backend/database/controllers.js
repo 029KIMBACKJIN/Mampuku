@@ -1,4 +1,5 @@
 const db = require("./models");
+const temp = require("./originModules/task");
 //テーブルモデルを取り出す。Tutorialとなっているが、tasksテーブルと思っていい
 const tasks = db.task_db;
 const Op = db.Sequelize.Op;
@@ -21,16 +22,7 @@ exports.create = (req, res) => {
       published: req.body.published ? req.body.published : false
     };
     */
-    const task = {
-      //左側の名前は、model.jsのカラム名と一致している必要がある。
-      id: req.body.id,
-      title: req.body.title,
-      contents: req.body.contents,  
-      deadline: req.body.deadline,
-      complelte: req.body.complete,
-      parentId: -1,   //不明
-      childId: -1    //不明
-    }
+    const task = temp.taskTemp(req);
     // Save Tutorial in the database
     tasks.create(task)
       .then(task => {
@@ -88,16 +80,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.body.id;
 
-    const task = {
-      //左側の名前は、model.jsのカラム名と一致している必要がある。
-      id: req.body.id,
-      title: req.body.title,
-      contents: req.body.contents,  
-      deadline: req.body.deadline,
-      complelte: req.body.complete,
-      parentId: req.body.parentId,   //不明
-      childId: req.body.childId    //不明
-    }
+    const task = temp.taskTemp(req);
 
     //idが一致するものを修正する。
     tasks.update(task, {
@@ -121,7 +104,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.destroy({
+    tasks.destroy({
       where: { id: id }
     })
       .then(num => {
