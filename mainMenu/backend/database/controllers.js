@@ -46,7 +46,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    const id = req.query.id;
+
     var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
   
     //{内に、select文などのsql文を記載すれば取れるはず？}
@@ -82,7 +82,6 @@ exports.findOne = (req, res) => {
           message: "Error retrieving task with id=" + id
         });
       });
-    //return datas;
   };
 
 // Update a Tutorial by the id in the request
@@ -96,7 +95,7 @@ exports.update = (req, res) => {
     }
 
     //idが一致するものを修正する。
-    Tutorial.update(task, {
+    tasks.update(task, {
       where: { id: id }
     })
       .then(num => {
@@ -117,7 +116,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.destroy({
+    tasks.destroy({
       where: { id: id }
     })
       .then(num => {
@@ -140,7 +139,7 @@ exports.delete = (req, res) => {
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-    Tutorial.destroy({
+  tasks.destroy({
       where: {},
       truncate: false
     })
