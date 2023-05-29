@@ -49,7 +49,9 @@
       isTaskCreated:false,
       isEditFlag:false,
       isTaskEdit:false,
-      resDatas:{}
+      resDatas:{},
+      intervalId:-1,    //繰り返し読んでいるメソッドのインターバルID
+      currentDate:null
     }),
     components: {
       //HelloWorld,
@@ -60,6 +62,10 @@
       CalenderDate,
       TaskAdd,
       TaskEdit
+    },
+    mounted(){
+      //1秒に１回、getCurrentDateを呼び出す(これでスタートされる)。インターバルIDを変数に代入しておく
+      this.intervalId = setInterval(this.getCurrentDate, 1000);
     },
     methods:{
       sendToMindMapDraw:function(event){
@@ -87,6 +93,37 @@
       },
       sendDatasToEdit:function(event){
         this.resDatas = event;
+      },
+      getDayToString:function(dayID){
+        switch(dayID){
+          case 0:
+            return "日";
+          case 1:
+            return "月";
+          case 2:
+            return "火";
+          case 3:
+            return "水";
+          case 4:
+            return "木";
+          case 5:
+            return "金";
+          case 6:
+            return "土";
+          
+        }
+      },
+      getCurrentDate:function(){
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = now.getMonth() + 1;  //0からのため
+        var date = now.getDate();
+        var day = this.getDayToString(now.getDay());
+        var hour = now.getHours();
+        var min = now.getMinutes();
+        var sec = now.getSeconds();
+        console.log(year + "年 " + month + "月 " + date + "日 (" + day + ")" + hour + "時 " + min + "分 " + sec + "秒");
+        this.currentDate = year + "-" + month + "-" + date + "-" + day + "-" + hour + "-" + min + "-" + sec;
       }
     }
   }

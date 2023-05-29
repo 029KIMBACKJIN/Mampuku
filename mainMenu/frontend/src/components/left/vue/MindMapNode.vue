@@ -1,6 +1,7 @@
 <template>
     <button v-bind:id = "TaskNode.id"
-        style="position: absolute;
+        style="
+        position: absolute;
         display: inline-block;
         width: 100px;  /*幅*/
         height: 100px;  /*高さ*/
@@ -56,39 +57,8 @@ export default{
     }),
     components: {
     },
-    computed:{
-
-    },
     methods:{
         mouseDoubleClick: function(){
-            //this.TaskNode.taskName = "ノードでダブルクリックした";
-            //データを送りたいときはpost titleを送る
-            //params引数はreq.params.で取れる
-            /*
-            axios.post("/MindMap/doubleClick", {
-                id: this.TaskNode.id,
-                title: this.TaskNode.taskName
-            })
-            .then((res) => {
-                alert(res.data.title);
-            })
-            .catch((e)=>{
-                alert(e);
-            })
-            */
-            /*
-            this.TaskNode.taskName = "ダブルクリックした";
-            //要素を複製する処理(idを引数に入れる)
-            let circle = document.getElementById("circle");
-            //子要素も含めて複製する。
-            let clone_circle = circle.cloneNode(true);
-
-            //内容を編集したい場合は追記 TaskNodeオブジェクトを複製したい
-            //id名の変更と、buttonタグにあるidも動的に変えてしまえば動くのでは？？？
-
-            //htmlに挿入
-            circle.after(clone_circle);
-            */
         },
         mouseClickUp:function(){
             //this.TaskNode.taskName = "離した";
@@ -147,7 +117,7 @@ export default{
             //this.TaskNode.taskName = "離した";
         },
         getTaskName:function(){
-            return this.TaskNode.taskName;
+            console.log("get");
         }
     }
 }
