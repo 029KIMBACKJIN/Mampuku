@@ -10,7 +10,7 @@
         <MenuBar/>
       </div>
       <div class = "MindMap">
-        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:sendToEdit="sendToEdit"/>        
+        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit"/>        
       </div>
     </div>
     <!--右側-->
@@ -25,7 +25,7 @@
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
       <div class = "TaskEdit">
-        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
+        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2" :isNodeEdit="isEditFlag" :currentNodeDatas="resDatas" v-on:editFlag="sendEditToMindMapDraw" v-on:resEditDatas="sendToMindMapDraw2"/>        
       </div>
     </div>
   </div>    
@@ -47,6 +47,8 @@
     name: 'App',
     data: ()=>({
       isTaskCreated:false,
+      isEditFlag:false,
+      isTaskEdit:false,
       resDatas:{}
     }),
     components: {
@@ -64,6 +66,10 @@
         console.log(event + "のデータをTaskAddから受け取りました");
         this.isTaskCreated = event;
       },
+      sendEditToMindMapDraw:function(event){
+        console.log(event + "のデータをTaskEditから受け取りました");
+        this.isTaskEdit = event;
+      },
       sendToMindMapDraw2:function(event){
         console.log("MindMapDrawに送るデータたち\n" + 
         event.id + "\n" + 
@@ -76,8 +82,11 @@
 
         this.resDatas = event;
       },
-      sendToEdit:function(event){
-        console.log(event);
+      sendFlagToEdit:function(event){
+        this.isEditFlag = event;
+      },
+      sendDatasToEdit:function(event){
+        this.resDatas = event;
       }
     }
   }

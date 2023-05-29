@@ -1,7 +1,6 @@
 <template>
   <div class = "TaskEdit">
       <h1>タスク編集</h1>
-      <button @click="clickCreateTask()">Edit Task</button>
       <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
           <form id = "task">  
@@ -53,13 +52,14 @@ export default{
     name:"TaskEdit",
     props:{
       isNodeClicked:Boolean,
+      isNodeEdit:Boolean,
       currentNodeDatas:Object,
     },
     data:()=>({
         isTaskFormOpen : false,
         resDatas:{
         },
-        isTaskCreatedSwitch: false, 
+        isTaskEditSwitch: false, 
         taskName:"",
         taskContent:"",
         deadline:null,
@@ -101,6 +101,18 @@ export default{
       }
     },
     watch:{
+      isNodeEdit:function(){
+        var datas = this.currentNodeDatas;
+        this.inputTaskName = datas.title;
+        this.inputTaskContent = datas.contents;
+        //こうしないと日付が反映されない。
+        this.inputDeadLine = (datas.deadline).split("T")[0];
+        this.inputComplete = datas.complelte;
+
+        //タスク編集画面表示
+        this.isTaskFormOpen = true;
+        
+      }
     },
     methods: {
       toggle: function() {
@@ -110,12 +122,16 @@ export default{
       createTask: function() {
         //送信ボタンを押したとき
         //データを送りたい場合はpost（express側も）と書いてリクエストする
+        var datas = this.currentNodeDatas;
         axios.post("/TaskEdit/update", {
           //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
-          title: this.taskName,
-          contents:this.taskContent,
-          deadline:this.deadline,
-          complete:this.complete
+          id:datas.id,
+          title: this.inputTaskName,
+          contents:this.inputTaskContent,
+          deadline:this.inputDeadLine,
+          complete:this.inputComplete,
+          parentId:datas.parentId,
+          childId:datas.childId
         }).then((res) =>{
           //レスポンスの結果を表示
                 alert("データを変更しました。\n変更内容" + 
@@ -135,15 +151,17 @@ export default{
             parentId: res.data.parentId,
             childId: res.data.childId
           }
-          this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
-          this.$emit("createdFlag", this.isTaskCreatedSwitch);
-          this.$emit("resDatas", this.resDatas);
+          this.isTaskEditSwitch = !this.isTaskEditSwitch;
+          this.$emit("editFlag", this.isTaskEditSwitch);
+          this.$emit("resEditDatas", this.resDatas);
 
           //入力内容をクリアする
           this.taskName = "";
           this.taskContent = "";
           this.deadline = null;
           this.complete = false;
+
+          this.isTaskFormOpen = false;
         }).catch((e) =>{
           alert(e);
         })

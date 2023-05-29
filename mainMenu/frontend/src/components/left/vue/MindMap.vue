@@ -2,7 +2,7 @@
     <div class = "MindMap">
         <h1>マインドマップ</h1>
         <div class = "MindMapDrawArea">
-            <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas"/>
+            <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas = "sendToEditDatas" :isTaskEdit="isTaskEdit"/>
         </div>
     </div>
 </template>
@@ -15,6 +15,7 @@ export default{
     name:"MindMap",
     props:{
         isTaskCreated:Boolean,
+        isTaskEdit:Boolean,
         resDatas:Object
     },
     data:()=>({
@@ -22,6 +23,14 @@ export default{
     }),
     components:{
         MindMapDraw
+    },
+    methods:{
+        sendToEditFlag:function(event){
+            this.$emit("isEditFlag", event);
+        },
+        sendToEditDatas:function(event){
+            this.$emit("resEditDatas", event);
+        }
     }
 }
 </script>

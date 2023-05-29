@@ -21,6 +21,7 @@
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
 import TaskEdit from '../../right/vue/TaskEdit.vue';
+import axios from 'axios';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
 
@@ -31,12 +32,14 @@ export default{
     name: "MindMapDraw",
     props: {
         isTaskCreated:Boolean,
+        isTaskEdit:Boolean,
         resDatas:Object,
         width:{type:Number,default:10000},
         height:{type:Number,default:10000}
     },
     data: () => ({
         isCreateNode:false,
+        isEditNode:false,
         nodes:[]
     }),
     components: {
@@ -70,7 +73,7 @@ export default{
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
-            wrapper.setAttribute("id", "node" + this.nodes.length);
+            wrapper.setAttribute("id", "node_" + this.nodes.length);
             //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
             wrapper.setAttribute('v-on:dblclick', TaskEdit.methods.mouseDoubleClick);
             //setAttributeでv-onと書いてメソッド指定でも反応するらしい
@@ -144,11 +147,30 @@ export default{
 
 
             document.getElementById("MindMapDraw").appendChild(wrapper);
+        },
+        isTaskEdit:function(){
+            //ページのリロードするとデータが失われるので、その時はエラーする。
+            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
+            console.log(this.nodes[0].data);
         }
     },
     methods:{
         mouseDoubleClick: function(event){
             console.log("ダブルクリックした。データ：" + event.target.id);
+            //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
+            axios.post("/MindMap/doubleClick", {
+                id: event.target.id
+            })
+            .then((res) => {
+                alert(res.data.title);
+                this.isEditNode = !this.isEditNode;
+                this.$emit("isEditFlag", this.isEditNode);
+                this.$emit("resEditDatas", res.data);
+            })
+            .catch((e)=>{
+                alert(e);
+            })
+
         },
         mouseClickUp:function(){
         },

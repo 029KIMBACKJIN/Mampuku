@@ -91,16 +91,21 @@ exports.update = (req, res) => {
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
-      title: req.body.title + " updated"
+      title: req.body.title,
+      contents: req.body.contents,  
+      deadline: req.body.deadline,
+      complelte: req.body.complete,
+      parentId: req.body.parentId,   //不明
+      childId: req.body.childId    //不明
     }
 
     //idが一致するものを修正する。
-    Tutorial.update(task, {
+    tasks.update(task, {
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
-          res.send("更新に成功");
+          res.send(task);
         } else {
           res.send("更新に失敗しました！");
         }

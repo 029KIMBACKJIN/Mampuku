@@ -1,6 +1,14 @@
 <template>
-    <button id = "circle"
-        style="position: absolute;"
+    <button v-bind:id = "TaskNode.id"
+        style="position: absolute;
+        display: inline-block;
+        width: 100px;  /*幅*/
+        height: 100px;  /*高さ*/
+        border-radius: 50%;  /*角の丸み*/
+        background: skyblue;
+        text-align:center;
+        line-height: 80px;
+        "
         v-bind:style="{
             transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
         }"    
@@ -15,7 +23,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+//import axios from 'axios';
 
 export default{
     name: "MindMapNode",
@@ -56,6 +64,7 @@ export default{
             //this.TaskNode.taskName = "ノードでダブルクリックした";
             //データを送りたいときはpost titleを送る
             //params引数はreq.params.で取れる
+            /*
             axios.post("/MindMap/doubleClick", {
                 id: this.TaskNode.id,
                 title: this.TaskNode.taskName
@@ -66,6 +75,7 @@ export default{
             .catch((e)=>{
                 alert(e);
             })
+            */
             /*
             this.TaskNode.taskName = "ダブルクリックした";
             //要素を複製する処理(idを引数に入れる)
@@ -142,4 +152,3 @@ export default{
     }
 }
 </script>
-<style src="../css/MindMapNode.css"></style>
