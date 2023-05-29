@@ -162,7 +162,7 @@ export default{
                 id: event.target.id
             })
             .then((res) => {
-                alert(res.data.title);
+                //alert(res.data.title);
                 this.isEditNode = !this.isEditNode;
                 this.$emit("isEditFlag", this.isEditNode);
                 this.$emit("resEditDatas", res.data);
