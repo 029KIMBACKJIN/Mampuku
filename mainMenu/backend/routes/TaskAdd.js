@@ -6,12 +6,8 @@ const app = express();
 app.post("/create", function(req, res){
     console.log(req.body);
     //データベースに登録
-    dbController.create(req, res);
-});
-
-app.post("/retrieve", function(req, res) {
-    //console.log(req.body);
-    dbController.findOne(req, res);
+    // dbController.create(req, res);
+    dbController.delete(req, res);
 });
 
 module.exports = app;
