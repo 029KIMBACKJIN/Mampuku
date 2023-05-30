@@ -126,9 +126,11 @@ export default{
                 this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
                 this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
             }
+            /*
             console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
             console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
             console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
+            */
         },
         getCurrentDate:function(){
             //Tue May 30 2023 09:47:24 GMT+0900のように取得される

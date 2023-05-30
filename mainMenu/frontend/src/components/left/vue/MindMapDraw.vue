@@ -153,12 +153,22 @@ export default{
             this.nodes.push(Component._instance);
             if(this.nodes.length >= 2){
                 //親ノードと子ノードのインスタンスをお互いに設定する
+                var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
+                var parent = null;
+                if(child.data.ParentNode.node != null){
+                    parent = this.nodes[child.data.ParentNode.node.data.TaskNode.id - 1];
+                }
                 //[1].parentNode.node = [0]...
-                this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
+                //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
+                child.data.ParentNode.node = parent;
                 //[0].childNode.node = [1]...
-                this.nodes[this.nodes.length - 2].data.ChildNode.node = this.nodes[this.nodes.length - 1];
+                if(parent != null){
+                    parent.data.ChildNode.node = child;
+                }
                 //子ノードへの線を設定する
-                Component._instance.data.ParentNode.node.data.TaskNode.line2 = line1;
+                if(Component._instance.data.ParentNode.node != null){
+                    Component._instance.data.ParentNode.node.data.TaskNode.line2 = line1;
+                }
             }
             document.getElementById("canvas").appendChild(line1);
             /*

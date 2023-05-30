@@ -40,6 +40,14 @@
                 終了フラグ(complelete)
               </p>
               <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
+              <br><br>
+              <p>
+                親ノード(oarentNode)
+              </p>
+              <select v-model="select" name="nodes" id="TaskNodes" v-on:mousedown="selectNodes">
+                <option value="">親ノード選択</option>
+              </select>
+              <br><br>
             </form>
             <button v-on:click="createTask">タスク登録(Create Task)</button>
           </div>
@@ -61,12 +69,8 @@ export default{
         resDatas:{
         },
         isTaskCreatedSwitch: false, 
-        taskName:"",
-        taskContent:"",
-        deadline:null,
-        complete:false,
-        parentId: "",
-        childId: ""
+        parentId: -1,
+        select:"親ノード選択"
     }),
     computed:{
       //値の監視？
@@ -103,6 +107,20 @@ export default{
         }
       }
     },
+    watch:{
+      select:function(){
+        //ドロップダウンメニューが選択されたら呼ばれる。valueが取れる
+        console.log(this.select);
+        axios.post("/TaskAdd/findParent",{
+          id: this.select
+        }).then((res)=>{
+          //親ノードを決定する
+          this.parentId = res.data.id;
+        }).catch((e)=>{
+          alert(e);
+        });
+      }
+    },
     methods: {
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
@@ -116,7 +134,9 @@ export default{
           title: this.taskName,
           contents:this.taskContent,
           deadline:this.deadline,
-          complete:this.complete
+          complete:this.complete,
+          parentId:this.parentId,
+          childId:-1
         }).then((res) =>{
           //レスポンスの結果を表示
               alert("データを登録しました。\n登録内容" + 
@@ -151,6 +171,26 @@ export default{
         } else {
           this.toggle();
         }
+      },
+      selectNodes:function(){
+        var element = document.getElementById("TaskNodes");
+        //オプションをクリアする(最初以外)
+        while(element.children.length > 1){
+          element.removeChild(element.lastChild);
+        }
+        //データベースから、登録されているタスク一覧を表示させる
+        axios.get("/TaskAdd/all").then((res)=>{          
+          for(var i = 0; i < res.data.length; i++){
+            var option = document.createElement("option");          
+            //option.setAttribute("id",res.data[i].id);
+            option.setAttribute("value", res.data[i].id);
+            option.text = res.data[i].title;
+            element.appendChild(option);
+          }
+        }).catch((e)=>{
+          alert(e);
+        })
+
       },
       // DB操作確認のため仮で作ったFuntion
       // Create Task ボタンを押したらTitleに入力した数字にてDBで検索
