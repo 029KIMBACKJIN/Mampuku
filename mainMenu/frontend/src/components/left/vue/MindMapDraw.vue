@@ -160,19 +160,20 @@ export default{
         mouseDoubleClick: function(event){
             console.log("ダブルクリックした。データ：" + event.target.id);
             //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
-            axios.post("/MindMap/doubleClick", {
-                id: event.target.id
-            })
-            .then((res) => {
-                //alert(res.data.title);
-                this.isEditNode = !this.isEditNode;
-                this.$emit("isEditFlag", this.isEditNode);
-                this.$emit("resEditDatas", res.data);
-            })
-            .catch((e)=>{
-                alert(e);
-            })
-
+            if(event.target.id != "canvas"){
+                axios.post("/MindMap/doubleClick", {
+                    id: event.target.id
+                })
+                .then((res) => {
+                    //alert(res.data.title);
+                    this.isEditNode = !this.isEditNode;
+                    this.$emit("isEditFlag", this.isEditNode);
+                    this.$emit("resEditDatas", res.data);
+                })
+                .catch((e)=>{
+                    alert(e);
+                })
+            }
         },
         mouseClickUp:function(){
         },
