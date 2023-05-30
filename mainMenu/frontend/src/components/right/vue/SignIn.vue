@@ -34,6 +34,7 @@
   </template>
   <script>
   import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+  import { onAuthStateChanged } from "firebase/auth";
   
   export default {
     data() {
@@ -42,6 +43,18 @@
         password: "",
         userMail: "",
       };
+    },
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // ログイン状況
+            this.isLoggedIn = true;
+        } else {
+            // ログアウト状況
+            this.isLoggedIn = false;
+        }
+        });
     },
     methods: {
       checkAccount() {
@@ -62,7 +75,6 @@
             const user = userCredential.user;
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
-            
           })
           .catch((error) => {
             const errorCode = error.code;

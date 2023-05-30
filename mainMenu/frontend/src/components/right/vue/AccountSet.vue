@@ -1,13 +1,11 @@
 <template>
     <div class = "AccountSet">
-        <!-- <div class = "button"><button v-on:click="Singin" class = "btn-primary">アカウント</button></div>  -->
-        <!-- <div class = "button"><button v-on:click="LogOutButton" class = "btn-danger">会員登録</button></div>  -->
         <div class = "button">
             <router-link to = "/signin">
                 <button class = "btn-primary">SignIn</button>
             </router-link>
         </div>
-        <div class = "button" v-if="isLoggedIn == false">
+        <div class = "button">
             <router-link to = "/signup">
                 <button class = "btn-danger">SignUp</button>
             </router-link>
