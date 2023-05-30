@@ -6,13 +6,13 @@
         width: 100px;  /*幅*/
         height: 100px;  /*高さ*/
         border-radius: 50%;  /*角の丸み*/
-        background: {{TaskNode.color}};
         text-align:center;
         line-height: 80px;
         "
         v-bind:style="{
-            transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
-        }"    
+            transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            backgroundColor: TaskNode.color
+        }"  
         v-on:dblclick="mouseDoubleClick"
         v-on:mousedown="mouseClickDown"
         v-on:mouseup="mouseClickUp($event)"
@@ -47,7 +47,7 @@ export default{
             y:600,
             drawWidth:100,
             drawHeight:100,
-            color:"#000000",
+            color:"#FFFFFF",
             taskName:"タスク名",        
             clicking:false,
             line1:null,   //親ノードへの線
@@ -169,11 +169,26 @@ export default{
                     r = parseInt(r, 16);  //16進数文字列を10進数に変換
                     g = parseInt(g, 16);  //16進数文字列を10進数に変換
                     b = parseInt(b, 16);  //16進数文字列を10進数に変換
-                    g -= g / days;
-                    b -= b / days;
-                    r.toString(16);  //16進数文字列を10進数に変換
-                    g.toString(16);  //10進数を16進数文字列に変換
-                    b.toString(16);  //10進数を16進数文字列に変換
+                    g -= parseInt(g / days);
+                    b -= parseInt(b / days);
+                    if(r < 10){
+                        r = "0" + r.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        r = r.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    if(g < 10){
+                        g = "0" + g.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        g = g.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    if(b < 10){
+                        b = "0" + b.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        b = b.toString(16);  //16進数文字列を10進数に変換
+                    }
                     this.TaskNode.color = rgb[0] + r + g + b;
                 }
 
