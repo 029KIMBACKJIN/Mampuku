@@ -12,15 +12,6 @@ exports.create = (req, res) => {
       });
       return;
     }
-  
-    // Create a Tutorial
-    /*
-    const tutorial = {
-      title: req.body.title,
-      description: req.body.description,
-      published: req.body.published ? req.body.published : false
-    };
-    */
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
@@ -29,7 +20,8 @@ exports.create = (req, res) => {
       deadline: req.body.deadline,
       complelte: req.body.complete,
       parentId: -1,   //不明
-      childId: -1    //不明
+      childId: -1,    //不明
+      userId: req.body.userId
     }
     // Save Tutorial in the database
     tasks.create(task)
@@ -44,9 +36,10 @@ exports.create = (req, res) => {
       });
   };
 
+// 未完成
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    const id = req.query.id;
+
     var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
   
     //{内に、select文などのsql文を記載すれば取れるはず？}
@@ -62,6 +55,7 @@ exports.findAll = (req, res) => {
       });
   };
 
+// 未完成
 // フロントからIDをもらってDBで検索
 exports.findOne = (req, res) => {
     // Axiosから送られたBodyを分析してIDをとる
@@ -82,8 +76,32 @@ exports.findOne = (req, res) => {
           message: "Error retrieving task with id=" + id
         });
       });
-    //return datas;
   };
+
+  // 未完成
+  // フロントからIDをもらってDBで検索
+exports.findWithIdAll = (req, res) => {
+  // Axiosから送られたBodyを分析してIDをとる
+  const uid = req.body.uid;
+
+  var condition = {
+    content: {
+      [Op.like]: `%${uid}%`
+    }
+  };
+
+  tasks.findAll({ where: condition })
+    .then(task => {
+      res.send(task);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Some error occurred while retrieving tasks."
+      });
+    });
+
+};
+
 
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
@@ -96,7 +114,7 @@ exports.update = (req, res) => {
     }
 
     //idが一致するものを修正する。
-    Tutorial.update(task, {
+    tasks.update(task, {
       where: { id: id }
     })
       .then(num => {
@@ -117,7 +135,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Tutorial.destroy({
+    tasks.destroy({
       where: { id: id }
     })
       .then(num => {
@@ -140,7 +158,7 @@ exports.delete = (req, res) => {
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-    Tutorial.destroy({
+  tasks.destroy({
       where: {},
       truncate: false
     })

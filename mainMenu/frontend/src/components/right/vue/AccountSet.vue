@@ -1,17 +1,23 @@
 <template>
     <div class = "AccountSet">
-        <!-- <div class = "button"><button v-on:click="Singin" class = "btn-primary">アカウント</button></div>  -->
         <div class = "button">
             <router-link to = "/signin">
-                <button class = "btn-primary">アカウント</button>
+                <button class = "btn-primary">SignIn</button>
             </router-link>
         </div>
-        <div class = "button"><button v-on:click="LogOutButton" class = "btn-danger">ログアウト</button></div> 
+        <div class = "button">
+            <router-link to = "/signup">
+                <button class = "btn-danger">SignUp</button>
+            </router-link>
+        </div>
+        
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 export default{
     name:"AccountSet",
@@ -19,8 +25,20 @@ export default{
 
     },
     data:()=>({
-
+        isLoggedIn: false
     }),
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // ログイン状況
+            this.isLoggedIn = true;
+        } else {
+            // ログアウト状況
+            this.isLoggedIn = false;
+        }
+        });
+    },
     methods:{
         AccountButton:function(){
             axios.get("/AccountSet/account")

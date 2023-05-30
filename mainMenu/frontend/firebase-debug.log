@@ -1,0 +1,21 @@
+[debug] [2023-05-28T07:49:59.870Z] ----------------------------------------------------------------------
+[debug] [2023-05-28T07:49:59.871Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\KIMBACKJIN\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-05-28T07:49:59.872Z] CLI Version:   12.2.1
+[debug] [2023-05-28T07:49:59.872Z] Platform:      win32
+[debug] [2023-05-28T07:49:59.872Z] Node Version:  v18.16.0
+[debug] [2023-05-28T07:49:59.874Z] Time:          Sun May 28 2023 16:49:59 GMT+0900 (일본 표준시)
+[debug] [2023-05-28T07:49:59.874Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-28T07:49:59.882Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-28T07:49:59.882Z] > authorizing via signed-in user (2023dounyukenshu.029@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\KIMBACKJIN\VScode\Mampuku\MainMenu\frontend
+

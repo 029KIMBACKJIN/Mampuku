@@ -55,8 +55,8 @@ app.use(function(req, res, next) {
 
 // DBとORM連携
 const db = require("./database/models");
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
+db.sequelize.sync({ force: false }).then(() => {
+  console.log("DB 起動");
 });
 
 //追加
