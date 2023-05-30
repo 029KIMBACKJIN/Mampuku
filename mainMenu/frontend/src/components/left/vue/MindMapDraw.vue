@@ -90,6 +90,7 @@ export default{
             Component._instance.data.ParentNode.id = this.resDatas.parentId;
             Component._instance.data.ChildNode.id = this.resDatas.childId;
             Component._instance.data.TaskNode.drawHeight = this.height;
+            Component._instance.data.TaskNode.deadline = this.resDatas.deadline;
 
 
             //lineタグを生成
@@ -151,6 +152,7 @@ export default{
         isTaskEdit:function(){
             //ページのリロードするとデータが失われるので、その時はエラーする。
             this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
+            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
             console.log(this.nodes[0].data);
         }
     },

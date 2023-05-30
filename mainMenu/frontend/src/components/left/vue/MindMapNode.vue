@@ -25,6 +25,7 @@
 
 <script>
 //import axios from 'axios';
+const interval = require('../../../originModules/methods');
 
 export default{
     name: "MindMapNode",
@@ -49,7 +50,8 @@ export default{
             line1:null,   //親ノードへの線
             line2:null,    //子ノードへの線
             currentDate:null,  //現在時刻
-            intervalId:null
+            intervalId:null,
+            deadline:null   //締め切り日
 
         },
         ChildNode:{
@@ -124,7 +126,25 @@ export default{
             //this.TaskNode.taskName = "離した";
         },
         getCurrentDate:function(){
+            //Tue May 30 2023 09:47:24 GMT+0900のように取得される
             this.TaskNode.currentDate = new Date();
+            if(this.TaskNode.deadline != null){
+                //2023-05-30T00:00:00:000Zのように取られる
+                var deadYmd = (this.TaskNode.deadline).split('T')[0].split('-');
+
+                var currentY = this.TaskNode.currentDate.getFullYear();
+                var currentM = this.TaskNode.currentDate.getMonth() + 1;
+                var currentD = this.TaskNode.currentDate.getDate();
+
+                /*
+                日数を計算する
+                */
+                var days = interval.getDays(currentY, currentM, currentD, parseInt(deadYmd[0]), parseInt(deadYmd[1]), parseInt(deadYmd[2]));
+                //計算した日数から位置やサイズを計算する
+                if(days == 0){
+                    //
+                }
+            }
         }
     }
 }
