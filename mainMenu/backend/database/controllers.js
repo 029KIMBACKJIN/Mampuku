@@ -38,7 +38,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
-    const id = req.query.id;
+    const id = req.body.id;
     var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
     //{内に、select文などのsql文を記載すれば取れるはず？}
     tasks.findAll({ where: condition })
@@ -52,6 +52,21 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
+//追加
+exports.findAllData = (req, res) => {
+  //{内に、select文などのsql文を記載すれば取れるはず？}
+  tasks.findAll()
+    .then(task => {
+      res.send(task);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
+};
 
 // フロントからIDをもらってDBで検索
 exports.findOne = (req, res) => {

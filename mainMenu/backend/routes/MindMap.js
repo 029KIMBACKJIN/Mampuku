@@ -10,4 +10,9 @@ router.post("/doubleClick", function(req, res){
     dbController.findOne(req, res);
 })
 
+router.get("/all", function(req, res){
+    console.log(req.params, req.body);
+    dbController.findAllData(req, res);
+})
+
 module.exports = router;

@@ -20,7 +20,6 @@
 <script>
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
-import TaskEdit from '../../right/vue/TaskEdit.vue';
 import axios from 'axios';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
@@ -54,7 +53,19 @@ export default{
         svg.setAttribute("height", this.height);
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
         svg.setAttribute("style", "background-color:aqua");
-        document.getElementById("MindMapDraw").appendChild(svg);     
+        document.getElementById("MindMapDraw").appendChild(svg);  
+        
+        //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
+        //現在は無作為だが、ユーザIDで検索ができたらそれに変更する。
+        axios.get("/MindMap/all")
+        .then((res) =>{
+            console.log(res.data);
+            for(var i = 0; i < res.data.length; i++){
+                this.createNode(res.data[i]);
+            }
+        }).catch((e)=>{
+            alert(e);
+        })
     }
     ,
     watch:{
@@ -69,13 +80,43 @@ export default{
             this.resDatas.parentId + "\n" + 
             this.resDatas.childId );
 
+            this.createNode(this.resDatas);
+        },
+        isTaskEdit:function(){
+            //ページのリロードするとデータが失われるので、その時はエラーする。
+            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
+            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
+            console.log(this.nodes[0].data);
+        }
+    },
+    methods:{
+        mouseDoubleClick: function(event){
+            console.log("ダブルクリックした。データ：" + event.target.id);
+            //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
+            if(event.target.id != "canvas"){
+                axios.post("/MindMap/doubleClick", {
+                    id: event.target.id
+                })
+                .then((res) => {
+                    //alert(res.data.title);
+                    this.isEditNode = !this.isEditNode;
+                    this.$emit("isEditFlag", this.isEditNode);
+                    this.$emit("resEditDatas", res.data);
+                })
+                .catch((e)=>{
+                    alert(e);
+                })
+            }
+        },
+        mouseClickUp:function(){
+        },
+        createNode:function(data){
             //コンポーネントを生成する
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
             wrapper.setAttribute("id", "node_" + this.nodes.length);
             //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
-            wrapper.setAttribute('v-on:dblclick', TaskEdit.methods.mouseDoubleClick);
             //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
             Component.mount(wrapper);
@@ -85,12 +126,12 @@ export default{
             //タスク作成画面から得た情報から、タスク名を取り出す
             //var taskName = ;
             //データベースに登録されているタスクのid, 名前を代入する。
-            Component._instance.data.TaskNode.id = this.resDatas.id;
-            Component._instance.data.TaskNode.taskName = this.resDatas.title;
-            Component._instance.data.ParentNode.id = this.resDatas.parentId;
-            Component._instance.data.ChildNode.id = this.resDatas.childId;
+            Component._instance.data.TaskNode.id = data.id;
+            Component._instance.data.TaskNode.taskName = data.title;
+            Component._instance.data.ParentNode.id = data.parentId;
+            Component._instance.data.ChildNode.id = data.childId;
             Component._instance.data.TaskNode.drawHeight = this.height;
-            Component._instance.data.TaskNode.deadline = this.resDatas.deadline;
+            Component._instance.data.TaskNode.deadline = data.deadline;
 
 
             //lineタグを生成
@@ -148,37 +189,7 @@ export default{
 
 
             document.getElementById("MindMapDraw").appendChild(wrapper);
-        },
-        isTaskEdit:function(){
-            //ページのリロードするとデータが失われるので、その時はエラーする。
-            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
-            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
-            console.log(this.nodes[0].data);
-        }
-    },
-    methods:{
-        mouseDoubleClick: function(event){
-            console.log("ダブルクリックした。データ：" + event.target.id);
-            //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
-            if(event.target.id != "canvas"){
-                axios.post("/MindMap/doubleClick", {
-                    id: event.target.id
-                })
-                .then((res) => {
-                    //alert(res.data.title);
-                    this.isEditNode = !this.isEditNode;
-                    this.$emit("isEditFlag", this.isEditNode);
-                    this.$emit("resEditDatas", res.data);
-                })
-                .catch((e)=>{
-                    alert(e);
-                })
-            }
-        },
-        mouseClickUp:function(){
-        },
-        setLinePosition:function(event){
-            console.log(event);
+
         }
     }
 }
