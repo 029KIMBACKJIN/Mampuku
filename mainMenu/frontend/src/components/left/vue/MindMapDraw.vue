@@ -154,10 +154,7 @@ export default{
             if(this.nodes.length >= 2){
                 //親ノードと子ノードのインスタンスをお互いに設定する
                 var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
-                var parent = null;
-                if(child.data.ParentNode.node != null){
-                    parent = this.nodes[child.data.ParentNode.node.data.TaskNode.id - 1];
-                }
+                var parent = this.nodes[data.parentId - 1];
                 //[1].parentNode.node = [0]...
                 //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
                 child.data.ParentNode.node = parent;
