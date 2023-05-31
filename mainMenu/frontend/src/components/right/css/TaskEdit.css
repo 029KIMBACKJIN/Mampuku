@@ -1,9 +1,8 @@
-.TaskAdd{
+.TaskEdit{
     text-align: center;
     background-color: white;
     height: 39vw;
     margin:2%;
-    position: relative;
 }
 p{
     font-size:larger;
@@ -11,16 +10,15 @@ p{
 }
 
 .black-bg{
-    width: 23vw;
-    height: 35vw;
+    width: auto;
+    height: auto;
     background: rgba(0, 0, 0, 0.5);
     position: relative;  /*fixed => relativeに変更*/
     padding: 20px;
 }
 
 .white-bg{
-    width: 20vw;
-    height: 32vw;
+    width: auto;
     background: white;
     border-radius: 30px;
     padding: 20px;

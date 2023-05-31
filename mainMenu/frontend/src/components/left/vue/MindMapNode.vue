@@ -1,11 +1,18 @@
 <template>
-    <!--
-    <ParentLine  v-bind:x1="ParentNode.x" v-bind:y1="ParentNode.y" v-bind:x2="TaskNode.x" v-bind:y2="TaskNode.y"/>
-    -->
-    <button id = "circle" 
+    <button v-bind:id = "TaskNode.id"
+        style="
+        position: absolute;
+        display: inline-block;
+        width: 100px;  /*幅*/
+        height: 100px;  /*高さ*/
+        border-radius: 50%;  /*角の丸み*/
+        text-align:center;
+        line-height: 80px;
+        "
         v-bind:style="{
-            transform: `translate(${TaskNode.x}px, ${TaskNode.y}px) scale(${TaskNode.scX}, ${TaskNode.scY})`
-        }"    
+            transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            backgroundColor: TaskNode.color
+        }"  
         v-on:dblclick="mouseDoubleClick"
         v-on:mousedown="mouseClickDown"
         v-on:mouseup="mouseClickUp($event)"
@@ -14,17 +21,16 @@
         >
         {{ TaskNode.taskName }}
     </button>
-    <!--
-    <ChildLine v-bind:x1="TaskNode.x" v-bind:y1="TaskNode.y" v-bind:x2="ChildNode.x" v-bind:y2="ChildNode.y"/>
-    -->
 </template>
 
 <script>
-import axios from 'axios';
+//import axios from 'axios';
+const interval = require('../../../originModules/calcDayMethods');
 
 export default{
     name: "MindMapNode",
-    props: {},
+    props: {
+    },
     data: () => ({
         ParentNode:{
             node:null,
@@ -35,50 +41,36 @@ export default{
             id:"circle",
             scX:2,
             scY:2,
+            maxScX:4,
+            maxScY:4,
             x:100,
-            y:100,
-            width:100,
-            height:100,
+            y:600,
+            drawWidth:100,
+            drawHeight:100,
+            color:"#FFFFFF",
             taskName:"タスク名",        
-            clicking:false
+            clicking:false,
+            line1:null,   //親ノードへの線
+            line2:null,    //子ノードへの線
+            currentDate:null,  //現在時刻
+            intervalId:null,
+            deadline:null   //締め切り日
+
         },
         ChildNode:{
             node:null,
             x:100,
             y:0
-        }
+        },
     }),
     components: {
     },
+    mounted(){
+        //1秒単位で現在時刻を更新する。
+        this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
+    },
     methods:{
         mouseDoubleClick: function(){
-            //this.TaskNode.taskName = "ノードでダブルクリックした";
-            //データを送りたいときはpost titleを送る
-            //params引数はreq.params.で取れる
-            axios.post("/MindMap/doubleClick", {
-                id: this.TaskNode.id,
-                title: this.TaskNode.taskName
-            })
-            .then((res) => {
-                alert(res.data.title);
-            })
-            .catch((e)=>{
-                alert(e);
-            })
-
-            /*
-            this.TaskNode.taskName = "ダブルクリックした";
-            //要素を複製する処理(idを引数に入れる)
-            let circle = document.getElementById("circle");
-            //子要素も含めて複製する。
-            let clone_circle = circle.cloneNode(true);
-
-            //内容を編集したい場合は追記 TaskNodeオブジェクトを複製したい
-            //id名の変更と、buttonタグにあるidも動的に変えてしまえば動くのでは？？？
-
-            //htmlに挿入
-            circle.after(clone_circle);
-            */
         },
         mouseClickUp:function(){
             //this.TaskNode.taskName = "離した";
@@ -94,31 +86,122 @@ export default{
                 //マウスの移動量で計算
                 this.TaskNode.x += e.movementX;
                 this.TaskNode.y += e.movementY;
-
-                if(this.ParentNode.node != null){
-                    this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
-                    this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
-                }
-                if(this.ChildNode.node != null){
-                    this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
-                    this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
-                }
-                //親コンポーネントにデータを送る
-                this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
-
-                console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
-                console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
-                console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
+                this.setPos();
             }
         },
         mouseLeave:function(){
             this.TaskNode.clicking = false;
             //this.TaskNode.taskName = "離した";
         },
-        getTaskName:function(){
-            return this.TaskNode.taskName;
+        setPos:function(){
+            if(this.ParentNode.node != null){
+                this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
+                this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
+                this.ParentNode.node.data.ChildNode.x = this.TaskNode.x;
+                this.ParentNode.node.data.ChildNode.y = this.TaskNode.y;
+            }
+            if(this.ChildNode.node != null){
+                this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
+                this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
+                this.ChildNode.node.data.ParentNode.x = this.TaskNode.x;
+                this.ChildNode.node.data.ParentNode.y = this.TaskNode.y;
+            }
+            //親コンポーネントにデータを送る
+            //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
+            if(this.TaskNode.line1 != null){
+                this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
+                this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
+                this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
+                this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
+                /*
+                if(this.ParentNode.node.TaskNode.line2 != null){
+                    this.ParentNode.node.TaskNode.line2.setAttribute("x1", this.ParentNode.node.TaskNode.x);
+                    this.ParentNode.node.TaskNode.line2.setAttribute("y1", this.ParentNode.node.TaskNode.y);
+                }
+                */
+            }
+            if(this.TaskNode.line2 != null){
+                this.TaskNode.line2.setAttribute("x1", this.TaskNode.x);
+                this.TaskNode.line2.setAttribute("y1", this.TaskNode.y);
+                this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
+                this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
+            }
+            /*
+            console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
+            console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
+            console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
+            */
+        },
+        getCurrentDate:function(){
+            //Tue May 30 2023 09:47:24 GMT+0900のように取得される
+            //この条件分岐はデバッグ用。日数経過とともに移動するかを試した
+            if(this.TaskNode.currentDate != null){
+                this.TaskNode.currentDate.setDate(this.TaskNode.currentDate.getDate() + 1);
+            }
+            else{
+                this.TaskNode.currentDate = new Date();
+            }
+            if(this.TaskNode.deadline != null){
+                //2023-05-30T00:00:00:000Zのように取られる
+                var deadYmd = (this.TaskNode.deadline).split('T')[0].split('-');
+
+                var currentY = this.TaskNode.currentDate.getFullYear();
+                var currentM = this.TaskNode.currentDate.getMonth() + 1;
+                var currentD = this.TaskNode.currentDate.getDate();
+
+                /*
+                日数を計算する
+                */
+                var days = interval.getDays(currentY, currentM, currentD, parseInt(deadYmd[0]), parseInt(deadYmd[1]), parseInt(deadYmd[2]));
+
+                //色を時間とともに変更（赤くなっていくようにした）
+                //1文字ずつ分割して配列にする。最初の要素は「#」
+                var rgb = (this.TaskNode.color).split('');
+                var r = rgb[1] + rgb[2];  //FF
+                var g = rgb[3] + rgb[4];  //FF
+                var b = rgb[5] + rgb[6];  //FF
+
+                //計算した日数から位置やサイズを計算する
+                //位置は初期位置からdays分割した値だけ上昇するように設定。横は設定しない
+                //this.TaskNode.y -= this.TaskNode.y / days;
+                //サイズを時間とともに変更(0で割ることを防止する)
+                if(days > 0){
+                    this.TaskNode.scX += (this.TaskNode.maxScX - this.TaskNode.scX) / days;
+                    this.TaskNode.scY += (this.TaskNode.maxScY - this.TaskNode.scY) / days;
+                    r = parseInt(r, 16);  //16進数文字列を10進数に変換
+                    g = parseInt(g, 16);  //16進数文字列を10進数に変換
+                    b = parseInt(b, 16);  //16進数文字列を10進数に変換
+                    g -= parseInt(g / days);
+                    b -= parseInt(b / days);
+                    if(r < 10){
+                        r = "0" + r.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        r = r.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    if(g < 10){
+                        g = "0" + g.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        g = g.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    if(b < 10){
+                        b = "0" + b.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    else{
+                        b = b.toString(16);  //16進数文字列を10進数に変換
+                    }
+                    this.TaskNode.color = rgb[0] + r + g + b;
+                }
+
+                this.setPos();
+                //期限を過ぎたら
+                if(days <= 0){
+                    clearInterval(this.TaskNode.intervalId);
+                    alert("タスク：「" + this.TaskNode.taskName + "」が期限になりました");
+                }
+            }
         }
     }
 }
 </script>
-<style src="../css/MindMapNode.css"></style>
