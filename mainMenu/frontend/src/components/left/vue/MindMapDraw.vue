@@ -132,8 +132,6 @@ export default{
             //データベースに登録されているタスクのid, 名前を代入する。
             Component._instance.data.TaskNode.id = data.id;
             Component._instance.data.TaskNode.taskName = data.title;
-            Component._instance.data.ParentNode.id = data.parentId;
-            Component._instance.data.ChildNode.id = data.childId;
             Component._instance.data.TaskNode.drawHeight = this.height;
             Component._instance.data.TaskNode.deadline = data.deadline;
 
@@ -161,14 +159,16 @@ export default{
                 var parent = this.nodes[data.parentId - 1];
                 //[1].parentNode.node = [0]...
                 //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
+                //子ノードの親は１つしか現在指定できないのでこれでいいはず。
                 child.data.ParentNode.node = parent;
                 //[0].childNode.node = [1]...
                 if(parent != null){
-                    parent.data.ChildNode.node = child;
+                    //親側からみた子ノードは複数ある可能性がある
+                    parent.data.ChildNode.node.push(child);
                 }
                 //子ノードへの線を設定する
                 if(Component._instance.data.ParentNode.node != null){
-                    Component._instance.data.ParentNode.node.data.TaskNode.line2 = line1;
+                    Component._instance.data.ParentNode.node.data.TaskNode.line2.push(line1);
                 }
             }
             document.getElementById("canvas").appendChild(line1);

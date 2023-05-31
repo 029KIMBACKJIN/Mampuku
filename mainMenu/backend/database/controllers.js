@@ -109,13 +109,15 @@ exports.findOne = (req, res) => {
   // フロントからIDをもらってDBで検索
 exports.findWithIdAll = (req, res) => {
   // Axiosから送られたBodyを分析してIDをとる
-  const uid = req.body.userId;
+  // Axiosから送られたBodyを分析してIDをとる
+  const uid = req.body.uid;
 
   var condition = {
     content: {
       [Op.like]: `%${uid}%`
     }
   };
+  console.log("uid:" + uid + ", " + condition);
 
   tasks.findAll({ where: condition })
     .then(task => {
@@ -126,6 +128,7 @@ exports.findWithIdAll = (req, res) => {
         message: "Some error occurred while retrieving tasks."
       });
     });
+
 
 };
 

@@ -14,6 +14,7 @@ router.post("/create", function(req, res){
 router.get("/all", function(req, res){
     console.log(req.params, req.body);
     dbController.findAllData(req, res);
+    //dbController.findWithIdAll(req,res);
 });
 
 router.post("/findParent", function(req, res){

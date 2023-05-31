@@ -51,14 +51,14 @@ export default{
             taskName:"タスク名",        
             clicking:false,
             line1:null,   //親ノードへの線
-            line2:null,    //子ノードへの線
+            line2:[],    //子ノードへの線
             currentDate:null,  //現在時刻
             intervalId:null,
             deadline:null   //締め切り日
 
         },
         ChildNode:{
-            node:null,
+            node:[],
             x:100,
             y:0
         },
@@ -95,19 +95,26 @@ export default{
         },
         setPos:function(){
             if(this.ParentNode.node != null){
+                //現在ノードが親ノードの位置を記憶
                 this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
                 this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
+                //親ノードが子ノードの位置を記憶
                 this.ParentNode.node.data.ChildNode.x = this.TaskNode.x;
                 this.ParentNode.node.data.ChildNode.y = this.TaskNode.y;
             }
-            if(this.ChildNode.node != null){
-                this.ChildNode.x =  this.ChildNode.node.data.TaskNode.x;
-                this.ChildNode.y =  this.ChildNode.node.data.TaskNode.y;
-                this.ChildNode.node.data.ParentNode.x = this.TaskNode.x;
-                this.ChildNode.node.data.ParentNode.y = this.TaskNode.y;
+            if(this.ChildNode.node.length != 0){
+                //現在ノードが子ノードの位置を記憶
+                this.ChildNode.x =  this.ChildNode.node[0].data.TaskNode.x;
+                this.ChildNode.y =  this.ChildNode.node[0].data.TaskNode.y;
+                //子ノードが親ノードの位置を記憶
+                for(var i = 0; i < this.ChildNode.node.length; i++){
+                    this.ChildNode.node[i].data.ParentNode.x = this.TaskNode.x;
+                    this.ChildNode.node[i].data.ParentNode.y = this.TaskNode.y;
+                }
             }
             //親コンポーネントにデータを送る
             //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
+            //子(多)から親(1)への線
             if(this.TaskNode.line1 != null){
                 this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
                 this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
@@ -120,11 +127,19 @@ export default{
                 }
                 */
             }
-            if(this.TaskNode.line2 != null){
-                this.TaskNode.line2.setAttribute("x1", this.TaskNode.x);
-                this.TaskNode.line2.setAttribute("y1", this.TaskNode.y);
-                this.TaskNode.line2.setAttribute("x2", this.ChildNode.x);
-                this.TaskNode.line2.setAttribute("y2", this.ChildNode.y);
+            //親(1)から子(多)への線
+            if(this.TaskNode.line2.length != 0){
+                for(i = 0; i < this.TaskNode.line2.length; i++){
+                    this.TaskNode.line2[i].setAttribute("x1", this.TaskNode.x);
+                    this.TaskNode.line2[i].setAttribute("y1", this.TaskNode.y);                
+                    this.TaskNode.line2[i].setAttribute("x2", this.ChildNode.node[i].data.TaskNode.x);
+                    this.TaskNode.line2[i].setAttribute("y2", this.ChildNode.node[i].data.TaskNode.y);
+
+                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[i].data.TaskNode.x);
+                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[i].data.TaskNode.y);
+                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
+                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
+                }
             }
             /*
             console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
