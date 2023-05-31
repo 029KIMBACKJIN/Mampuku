@@ -113,7 +113,7 @@ exports.findWithIdAll = (req, res) => {
   const uid = req.body.uid;
 
   var condition = {
-    content: {
+    userId: {
       [Op.like]: `%${uid}%`
     }
   };

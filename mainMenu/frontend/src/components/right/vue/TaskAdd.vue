@@ -197,9 +197,11 @@ export default{
         while(element.children.length > 1){
           element.removeChild(element.lastChild);
         }
-        //const user = getAuth().currentUser;
+        const user = getAuth().currentUser;
         //データベースから、登録されているタスク一覧を表示させる
-        axios.get("/TaskAdd/all").then((res)=>{          
+        axios.post("/TaskAdd/all", {
+          uid: user.uid
+        }).then((res)=>{          
           for(var i = 0; i < res.data.length; i++){
             var option = document.createElement("option");          
             //option.setAttribute("id",res.data[i].id);

@@ -69,6 +69,9 @@ export default{
         //1秒単位で現在時刻を更新する。
         this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
     },
+    watch:{
+        
+    },
     methods:{
         mouseDoubleClick: function(){
         },

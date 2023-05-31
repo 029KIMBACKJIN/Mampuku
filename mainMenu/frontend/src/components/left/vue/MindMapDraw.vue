@@ -41,6 +41,7 @@ export default{
     data: () => ({
         isCreateNode:false,
         isEditNode:false,
+        findUserIntervalID:null,
         nodes:[]
     }),
     components: {
@@ -57,20 +58,8 @@ export default{
         svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);  
         
-        //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
-        //現在は無作為だが、ユーザIDで検索ができたらそれに変更する。
-        const user = getAuth().currentUser;
-        axios.post("/MindMap/all",{
-            userId: user
-        })
-        .then((res) =>{
-            console.log(res.data);
-            for(var i = 0; i < res.data.length; i++){
-                this.createNode(res.data[i]);
-            }
-        }).catch((e)=>{
-            alert(e);
-        })
+        //1秒間隔で処理を呼ぶ。
+        this.findUserIntervalID = setInterval(this.findUser, 1000);
     }
     ,
     watch:{
@@ -115,14 +104,40 @@ export default{
                     //子供たちを削除する親ノードにつなげる
                     childNode[j].data.ParentNode.node = parentNode;
                     //線も同様に
-                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2;                    
+                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2[0];                    
                 }                
             }
             //splice: 開始要素番号, 何個消せるか
             this.nodes.splice(this.resDatas.id - 1, 1);
+            //htmlを削除
+            var element = document.getElementById("node_" + this.resDatas.id);
+            element.remove();
         }
     },
     methods:{
+        findUser:function(){
+            //ログインするまで定期的に呼ばれ続けるメソッド
+            const b = sessionStorage.getItem("login");
+            console.log(b);
+            if(b != null){
+                const user = getAuth().currentUser;
+                console.log("ログインしました");
+                clearInterval(this.findUserIntervalID);
+                //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
+                axios.post("/MindMap/all",{
+                    uid: user.uid
+                })
+                .then((res) =>{
+                    console.log(res.data);
+                    for(var i = 0; i < res.data.length; i++){
+                        this.createNode(res.data[i]);
+                    }
+                }).catch((e)=>{
+                    alert(e);
+                })
+                sessionStorage.removeItem("login");
+            }
+        },
         mouseDoubleClick: function(event){
             console.log("ダブルクリックした。データ：" + event.target.id);
             //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。

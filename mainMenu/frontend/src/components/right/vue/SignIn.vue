@@ -64,6 +64,8 @@
           console.log("ログイン済み");
           this.userMail = user.email;
           console.log(this.userMail);
+          //追加。MindMapDrawで感知して向こうで削除する
+          sessionStorage.setItem("login", true);
         } else {
           console.log("ログインしてない");
         }
