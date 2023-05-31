@@ -5,11 +5,11 @@
                 <button class = "btn-primary">SignIn</button>
             </router-link>
         </div>
-        <div class = "button">
+        <!-- <div class = "button">
             <router-link to = "/signup">
                 <button class = "btn-danger">SignUp</button>
             </router-link>
-        </div>
+        </div> -->
         
     </div>
 </template>
