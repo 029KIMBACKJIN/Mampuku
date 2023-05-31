@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/create", function(req, res){
     console.log(req.body);
     //データベースに登録
+
     dbController.create(req, res);
 });
 
@@ -21,6 +22,7 @@ router.post("/findParent", function(req, res){
 router.post("/retrieve", function(req, res) {
     //console.log(req.body);
     dbController.findOne(req, res);
+
 });
 
 module.exports = router;
