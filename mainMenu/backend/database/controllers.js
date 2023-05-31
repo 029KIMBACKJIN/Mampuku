@@ -22,7 +22,7 @@ exports.create = (req, res) => {
       published: req.body.published ? req.body.published : false
     };
     */
-    // const task = temp.taskTemp(req);
+    //const task = temp.taskTemp(req);
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
@@ -34,6 +34,7 @@ exports.create = (req, res) => {
       childId: -1,    //不明
       userId: req.body.userId
     }
+    console.log("登録情報：" + task);
     // Save Tutorial in the database
     tasks.create(task)
       .then(task => {
@@ -104,11 +105,10 @@ exports.findOne = (req, res) => {
       });
   };
 
-  // 未完成
   // フロントからIDをもらってDBで検索
 exports.findWithIdAll = (req, res) => {
   // Axiosから送られたBodyを分析してIDをとる
-  const uid = req.body.uid;
+  const uid = req.body.userId;
 
   var condition = {
     content: {

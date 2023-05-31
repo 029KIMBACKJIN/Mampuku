@@ -70,7 +70,7 @@ export default{
         resDatas:{
         },
         isTaskCreatedSwitch: false, 
-        select:"親ノード選択"
+        select:"親ノード選択",
         taskName:"",
         taskContent:"",
         deadline:null,
