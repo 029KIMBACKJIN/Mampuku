@@ -1,6 +1,27 @@
-.SignUp{
+.SignUp {
     text-align: center;
-    background-color: white;
-    height: 20vw;
-    margin:2%;
-}
+  }
+  
+  .SignUp form {
+    display: table;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  .SignUp form div {
+    display: table-row;
+  }
+  
+  .SignUp form div label,
+  .SignUp form div input {
+    display: table-cell;
+    padding: 10px;
+    border: 1px solid black;
+  }
+  
+  .SignUp form button {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
+  

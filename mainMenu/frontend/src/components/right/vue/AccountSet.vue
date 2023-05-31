@@ -1,16 +1,21 @@
 <template>
     <div class = "AccountSet">
         <div class = "button">
-            <router-link to = "/signin">
-                <button class = "btn-primary">SignIn</button>
-            </router-link>
+            <button class = "btn-primary" @click="openSignIn">Sign In</button>
         </div>
-        <!-- <div class = "button">
-            <router-link to = "/signup">
-                <button class = "btn-danger">SignUp</button>
-            </router-link>
-        </div> -->
-        
+        <div class = "button">
+            <button class = "btn-danger" @click="openSignUp">Sign Up</button>
+        </div>
+        <div class="modal-overlay" v-if="isSignInOpened" @click="closeSignIn">
+            <div class="modal-content" @click="stopPropagation">
+                <SignIn v-on:close-modal="closeSignIn" />
+            </div>
+        </div>
+        <div class="modal-overlay" v-if="isSignUpOpened" @click="closeSignUp">
+            <div class="modal-content" @click="stopPropagation">
+                <SignUp v-on:close-modal="closeSignUp" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -18,14 +23,22 @@
 import axios from 'axios';
 import { onAuthStateChanged } from "firebase/auth";
 import { getAuth } from "firebase/auth";
+import SignIn from './SignIn.vue';
+import SignUp from './SignUp.vue';
 
 export default{
     name:"AccountSet",
+    components: {
+        SignIn,
+        SignUp
+    },
     props:{
 
     },
     data:()=>({
-        isLoggedIn: false
+        isLoggedIn: false,
+        isSignInOpened: false,
+        isSignUpOpened: false
     }),
     mounted() {
         const auth = getAuth();
@@ -40,6 +53,21 @@ export default{
         });
     },
     methods:{
+        openSignIn() {
+            this.isSignInOpened = true;
+        },
+        closeSignIn() {
+            this.isSignInOpened = false;
+        },
+        openSignUp() {
+            this.isSignUpOpened = true;
+        },
+        closeSignUp() {
+            this.isSignUpOpened = false;
+        },
+        stopPropagation(event) {
+            event.stopPropagation();
+        },
         AccountButton:function(){
             axios.get("/AccountSet/account")
             .then((res)=>{

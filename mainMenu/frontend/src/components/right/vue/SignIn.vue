@@ -1,38 +1,18 @@
 <template>
-    <div>
-      <h2>SignIn</h2>
-
-      <div class = "SignIn">
-
+    <div class = "SignIn">
+      <h1>SignIn</h1>
+      <div>
         <form  @submit.prevent="signIn">
-          <div>
+          <div class="Email">
             <label for="email">Email:</label>
             <input type="email" id="email" v-model="email" required />
           </div>
-          <div>
+          <div class="Password">
             <label for="password">Password:</label>
             <input type="password" id="password" v-model="password" required />
           </div>
           <button type="submit">Sign In</button>
         </form>
-
-        <button @click="logout">logout</button>
-        <!-- <button @click="checkAccount">確認</button> -->
-        <div class = "button">
-            <router-link to = "/signup">
-                <button class = "btn-danger">SignUp</button>
-            </router-link>
-        </div>
-
-        <!-- <div v-if="userMail">
-            <p>ログイン済みです</p>
-            <p>{{ userMail }}</p>
-        </div>
-
-        <div v-else>
-          <p>ログインしてない</p>
-        </div> -->
-
       </div>
       
     </div>
@@ -48,6 +28,11 @@
         password: "",
         userMail: "",
       };
+    },
+    computed: {
+      isLoggedIn() {
+        return this.$store.state.isLoggedIn; // Vuex Store의 로그인 상태를 가져옴
+      },
     },
     mounted() {
         const auth = getAuth();
@@ -80,6 +65,7 @@
             const user = userCredential.user;
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
+            this.$store.dispatch('login', { username: 'example', password: 'password' });
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -93,6 +79,7 @@
         // Sign-out successful.
         sessionStorage.removeItem("currentUser");
         this.userMail = "";
+        this.$store.dispatch('logout');
         }).catch((error) => {
         // An error happened.
         console.log(error);

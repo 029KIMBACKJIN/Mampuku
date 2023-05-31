@@ -17,7 +17,6 @@
     <div class = "right">
       <div class = "Account">
         <AccountSet/>
-        <router-view></router-view>
       </div>
       <div class = "Calender">
         <CalenderDate/>
