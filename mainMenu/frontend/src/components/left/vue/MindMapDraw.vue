@@ -21,6 +21,7 @@
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
 
@@ -32,6 +33,7 @@ export default{
     props: {
         isTaskCreated:Boolean,
         isTaskEdit:Boolean,
+        isTaskDelete:Boolean,
         resDatas:Object,
         width:{type:Number,default:10000},
         height:{type:Number,default:10000}
@@ -57,7 +59,10 @@ export default{
         
         //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
         //現在は無作為だが、ユーザIDで検索ができたらそれに変更する。
-        axios.get("/MindMap/all")
+        const user = getAuth().currentUser;
+        axios.post("/MindMap/all",{
+            userId: user
+        })
         .then((res) =>{
             console.log(res.data);
             for(var i = 0; i < res.data.length; i++){
@@ -87,6 +92,34 @@ export default{
             this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
             this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
             console.log(this.nodes[0].data);
+        },
+        isTaskDelete:function(){
+            //削除命令が執行されたら
+            var i = this.resDatas.id - 1;
+            var node = this.nodes[i].data;
+            var parentNode = node.ParentNode.node;
+            var childNode = node.ChildNode.node;
+            if(parentNode != null){
+                //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
+                for(var j = 0; j < parentNode.data.ChildNode.node.length; j++){
+                    //見つかったら削除
+                    if(parentNode.data.ChildNode.node[j].data.TaskNode.id == this.resDatas.id){
+                        console.log("見つかった！");
+                        parentNode.data.ChildNode.node.splice(j, 1);
+                    }                    
+                }
+            }
+            if(childNode.length != 0){
+                //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
+                for(j = 0; j < childNode.length; j++){
+                    //子供たちを削除する親ノードにつなげる
+                    childNode[j].data.ParentNode.node = parentNode;
+                    //線も同様に
+                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2;                    
+                }                
+            }
+            //splice: 開始要素番号, 何個消せるか
+            this.nodes.splice(this.resDatas.id - 1, 1);
         }
     },
     methods:{
@@ -128,8 +161,6 @@ export default{
             //データベースに登録されているタスクのid, 名前を代入する。
             Component._instance.data.TaskNode.id = data.id;
             Component._instance.data.TaskNode.taskName = data.title;
-            Component._instance.data.ParentNode.id = data.parentId;
-            Component._instance.data.ChildNode.id = data.childId;
             Component._instance.data.TaskNode.drawHeight = this.height;
             Component._instance.data.TaskNode.deadline = data.deadline;
 
@@ -157,14 +188,16 @@ export default{
                 var parent = this.nodes[data.parentId - 1];
                 //[1].parentNode.node = [0]...
                 //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
+                //子ノードの親は１つしか現在指定できないのでこれでいいはず。
                 child.data.ParentNode.node = parent;
                 //[0].childNode.node = [1]...
                 if(parent != null){
-                    parent.data.ChildNode.node = child;
+                    //親側からみた子ノードは複数ある可能性がある
+                    parent.data.ChildNode.node.push(child);
                 }
                 //子ノードへの線を設定する
                 if(Component._instance.data.ParentNode.node != null){
-                    Component._instance.data.ParentNode.node.data.TaskNode.line2 = line1;
+                    Component._instance.data.ParentNode.node.data.TaskNode.line2.push(line1);
                 }
             }
             document.getElementById("canvas").appendChild(line1);

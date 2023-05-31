@@ -70,7 +70,7 @@ export default{
         resDatas:{
         },
         isTaskCreatedSwitch: false, 
-        select:"親ノード選択"
+        select:"親ノード選択",
         taskName:"",
         taskContent:"",
         deadline:null,
@@ -156,7 +156,7 @@ export default{
                 "\nタイトル：" + res.data.title +
                 "\n内容：" + res.data.contents + 
                 "\n締め切り日：" + res.data.deadline +  
-                "\n達成状況：" + (res.data.complete ?"達成":"未達成"));
+                "\n達成状況：" + (res.data.complelte ?"達成":"未達成"));  //complelteはスペルミスではない。モデルのテーブルのカラム名がそうなっているから
             //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
             //createdFlagという名前でtrueというデータを親コンポーネントに渡す
             //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
@@ -197,6 +197,7 @@ export default{
         while(element.children.length > 1){
           element.removeChild(element.lastChild);
         }
+        //const user = getAuth().currentUser;
         //データベースから、登録されているタスク一覧を表示させる
         axios.get("/TaskAdd/all").then((res)=>{          
           for(var i = 0; i < res.data.length; i++){
@@ -207,7 +208,7 @@ export default{
             element.appendChild(option);
           }
         }).catch((e)=>{
-          alert(e);
+          alert(e.message);
         })
 
       },

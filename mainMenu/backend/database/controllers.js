@@ -22,7 +22,8 @@ exports.create = (req, res) => {
       published: req.body.published ? req.body.published : false
     };
     */
-    // const task = temp.taskTemp(req);
+    const task = temp.taskTemp(req);
+    /*
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
@@ -30,10 +31,11 @@ exports.create = (req, res) => {
       contents: req.body.contents,  
       deadline: req.body.deadline,
       complelte: req.body.complete,
-      parentId: -1,   //不明
-      childId: -1,    //不明
+      parentId: req.body.parentId,   //不明
+      childId: req.body.childId,    //不明
       userId: req.body.userId
-    }
+    }*/
+    console.log("登録情報：" + task.toString());
     // Save Tutorial in the database
     tasks.create(task)
       .then(task => {
@@ -108,13 +110,15 @@ exports.findOne = (req, res) => {
   // フロントからIDをもらってDBで検索
 exports.findWithIdAll = (req, res) => {
   // Axiosから送られたBodyを分析してIDをとる
-  const uid = req.body.userId;
+  const uid = req.body.uid;
+
 
   var condition = {
     userId: {
       [Op.like]: `%${uid}%`
     }
   };
+  console.log("uid:" + uid + ", " + condition);
 
   tasks.findAll({ where: condition })
     .then(task => {
@@ -126,6 +130,7 @@ exports.findWithIdAll = (req, res) => {
         message: "Some error occurred while retrieving tasks."
       });
     });
+
 
 };
 
@@ -157,14 +162,16 @@ exports.update = (req, res) => {
 // Delete a Tutorial with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.body.id;
+
+    const task = temp.taskTemp(req);
+  
+
     tasks.destroy({
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "task was deleted successfully!"
-          });
+          res.send(task);
         } else {
           res.send({
             message: `Cannot delete task with id=${id}. Maybe task was not found!`

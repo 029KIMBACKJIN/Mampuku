@@ -10,7 +10,7 @@
         <MenuBar/>
       </div>
       <div class = "MindMap">
-        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit"/>        
+        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete"/>        
       </div>
     </div>
     <!--右側-->
@@ -26,7 +26,7 @@
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
       <div class = "TaskEdit">
-        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2" :isNodeEdit="isEditFlag" :currentNodeDatas="resDatas" v-on:editFlag="sendEditToMindMapDraw" v-on:resEditDatas="sendToMindMapDraw2"/>        
+        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2" :isNodeEdit="isEditFlag" :currentNodeDatas="resDatas" v-on:editFlag="sendEditToMindMapDraw" v-on:resEditDatas="sendToMindMapDraw2" v-on:deleteFlag="sendDeleteToMindMapDraw" v-on:resDeleteData="sendToMindMapDraw2"/>        
       </div>
     </div>
   </div>    
@@ -50,6 +50,7 @@
       isTaskCreated:false,
       isEditFlag:false,
       isTaskEdit:false,
+      isTaskDelete:false,
       resDatas:{}
     }),
     components: {
@@ -70,6 +71,10 @@
       sendEditToMindMapDraw:function(event){
         console.log(event + "のデータをTaskEditから受け取りました");
         this.isTaskEdit = event;
+      },
+      sendDeleteToMindMapDraw:function(event){
+        console.log(event + "の削除データをTaskEditから受け取りました");
+        this.isTaskDelete = event;
       },
       sendToMindMapDraw2:function(event){
         console.log("MindMapDrawに送るデータたち\n" + 

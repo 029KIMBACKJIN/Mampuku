@@ -7,7 +7,8 @@ exports.taskTemp = function(req){
         deadline: req.body.deadline,
         complelte: req.body.complete,
         parentId: req.body.parentId,   //不明
-        childId: req.body.childId    //不明
+        childId: req.body.childId,    //不明
+        userId: req.body.userId
       }
     return task;
 }
