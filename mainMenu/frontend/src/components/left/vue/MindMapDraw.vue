@@ -42,7 +42,7 @@ export default{
         isCreateNode:false,
         isEditNode:false,
         findUserIntervalID:null,
-        nodes:[]
+        nodes:{}
     }),
     components: {
         MindMapNode
@@ -196,11 +196,15 @@ export default{
             Component._instance.data.TaskNode.line1 = line1;
             //データベースに親ノードの子ノード情報を更新する。
 
-            this.nodes.push(Component._instance);
-            if(this.nodes.length >= 2){
+            //this.nodes.push(Component._instance);
+            //数字をキーとするノードを追加
+            this.nodes[data.id.toString()] = Component._instance;
+            if(Object.keys(this.nodes).length >= 2){
                 //親ノードと子ノードのインスタンスをお互いに設定する
-                var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
-                var parent = this.nodes[data.parentId - 1];
+                //var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
+                //var parent = this.nodes[data.parentId - 1];
+                var child = this.nodes[data.id];   //追加処理中のノードのこと
+                var parent = this.nodes[data.parentId];  //キーでアクセスしているためバグらない。
                 //[1].parentNode.node = [0]...
                 //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
                 //子ノードの親は１つしか現在指定できないのでこれでいいはず。
@@ -208,11 +212,13 @@ export default{
                 //[0].childNode.node = [1]...
                 if(parent != null){
                     //親側からみた子ノードは複数ある可能性がある
-                    parent.data.ChildNode.node.push(child);
+                    //parent.data.ChildNode.node.push(child);
+                    //辞書登録
+                    parent.data.ChildNode.node[child.data.TaskNode.id] = child;
                 }
                 //子ノードへの線を設定する
                 if(Component._instance.data.ParentNode.node != null){
-                    Component._instance.data.ParentNode.node.data.TaskNode.line2.push(line1);
+                    Component._instance.data.ParentNode.node.data.TaskNode.line2[child.data.TaskNode.id] = line1;
                 }
             }
             document.getElementById("canvas").appendChild(line1);
@@ -239,7 +245,12 @@ export default{
             document.getElementById("canvas").appendChild(line2);
             */
 
-            console.log("登録されているノード一覧\n\n" + this.nodes);
+            var keys = Object.keys(this.nodes);
+            for(var i = 0; i < keys.length; i++){
+                console.log("key = " + keys[i]);
+                var d = this.nodes[keys[i]];
+                console.log("登録されているノード:" + d.data);
+            }
             //MindMapDrawというidを持つ要素の中に入れる
 
 
