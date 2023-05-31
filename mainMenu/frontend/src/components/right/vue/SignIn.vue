@@ -17,16 +17,21 @@
         </form>
 
         <button @click="logout">logout</button>
-        <button @click="checkAccount">確認</button>
+        <!-- <button @click="checkAccount">確認</button> -->
+        <div class = "button">
+            <router-link to = "/signup">
+                <button class = "btn-danger">SignUp</button>
+            </router-link>
+        </div>
 
-        <div v-if="userMail">
+        <!-- <div v-if="userMail">
             <p>ログイン済みです</p>
             <p>{{ userMail }}</p>
         </div>
 
         <div v-else>
           <p>ログインしてない</p>
-        </div>
+        </div> -->
 
       </div>
       
