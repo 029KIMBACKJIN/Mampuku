@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
 export default{
@@ -69,8 +70,14 @@ export default{
         resDatas:{
         },
         isTaskCreatedSwitch: false, 
-        parentId: -1,
         select:"親ノード選択"
+        taskName:"",
+        taskContent:"",
+        deadline:null,
+        complete:false,
+        parentId: -1,
+        childId: -1,
+        userId:""
     }),
     computed:{
       //値の監視？
@@ -127,42 +134,54 @@ export default{
         else this.isTaskFormOpen = true;
       },
       createTask: function() {
-        //送信ボタンを押したとき
-        //データを送りたい場合はpost（express側も）と書いてリクエストする
-        axios.post("/TaskAdd/create", {
-          //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
-          title: this.taskName,
-          contents:this.taskContent,
-          deadline:this.deadline,
-          complete:this.complete,
-          parentId:this.parentId,
-          childId:-1
-        }).then((res) =>{
-          //レスポンスの結果を表示
-              alert("データを登録しました。\n登録内容" + 
-              "\nタイトル：" + res.data.title +
-              "\n内容：" + res.data.contents + 
-              "\n締め切り日：" + res.data.deadline +  
-              "\n達成状況：" + (res.data.complelte ?"達成":"未達成"));
-          //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
-          //createdFlagという名前でtrueというデータを親コンポーネントに渡す
-          //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
-          this.resDatas = {
-            id: res.data.id,
-            title: res.data.title,
-            contents: res.data.contents,
-            deadline: res.data.deadline,
-            complete: res.data.complelte,
-            parentId: res.data.parentId,
-            childId: res.data.childId
-          }
-          this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
-          this.$emit("createdFlag", this.isTaskCreatedSwitch);
-          this.$emit("resDatas", this.resDatas);
 
-        }).catch((e) =>{
-          alert(e);
-        })
+        const user = getAuth().currentUser;
+        if (user) {
+          // ログインした人のUID
+          const uid = user.uid;
+          //送信ボタンを押したとき
+          //データを送りたい場合はpost（express側も）と書いてリクエストする
+          axios.post("/TaskAdd/create", {
+            //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
+            title: this.taskName,
+            contents:this.taskContent,
+            deadline:this.deadline,
+            complete:this.complete,
+            parentId:this.parentId,
+            childId:-1,
+            userId: uid
+          }).then((res) =>{
+            //レスポンスの結果を表示
+                alert("データを登録しました。\n登録内容" + 
+                "\nタイトル：" + res.data.title +
+                "\n内容：" + res.data.contents + 
+                "\n締め切り日：" + res.data.deadline +  
+                "\n達成状況：" + (res.data.complete ?"達成":"未達成"));
+            //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
+            //createdFlagという名前でtrueというデータを親コンポーネントに渡す
+            //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
+            this.resDatas = {
+              id: res.data.id,
+              title: res.data.title,
+              contents: res.data.contents,
+              deadline: res.data.deadline,
+              complete: res.data.complelte,
+              parentId: res.data.parentId,
+              childId: res.data.childId,
+              userId: res.data.userId
+            }
+            this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
+            this.$emit("createdFlag", this.isTaskCreatedSwitch);
+            this.$emit("resDatas", this.resDatas);
+
+          }).catch((e) =>{
+            alert(e);
+          })
+        } else {
+          // ログインしてない場合の処理
+          alert("サインインしてください");
+        }
+        
       },
       clickCreateTask : function() {
         if(this.isTaskFormOpen == true) {

@@ -23,10 +23,13 @@ module.exports = (sequelize, Sequelize) => {
       },
       childId: {
         type: Sequelize.INTEGER
+      },
+      userId: {
+        type: Sequelize.STRING
       }
-    }, {
-        timestamps: false
-    });
+      }, {
+          timestamps: false
+      });
   
     return Task;
   };

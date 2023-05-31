@@ -1,4 +1,3 @@
-
 const express = require('express');
 const dbController = require('../database/controllers');
 const router = express.Router();

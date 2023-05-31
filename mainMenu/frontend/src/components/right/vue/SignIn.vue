@@ -1,31 +1,40 @@
 <template>
     <div>
       <h2>SignIn</h2>
-      <form @submit.prevent="signIn">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" v-model="email" required />
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-        <button type="submit">Sign In</button>
-      </form>
-      <button @click="logout">logout</button>
 
-      <button @click="checkAccount">確認</button>
-      <div v-if="userMail">
-        <p>ログイン済みです</p>
-        <p>{{ userMail }}</p>
+      <div class = "SignIn">
+
+        <form  @submit.prevent="signIn">
+          <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" v-model="email" required />
+          </div>
+          <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" v-model="password" required />
+          </div>
+          <button type="submit">Sign In</button>
+        </form>
+
+        <button @click="logout">logout</button>
+        <button @click="checkAccount">確認</button>
+
+        <div v-if="userMail">
+            <p>ログイン済みです</p>
+            <p>{{ userMail }}</p>
+        </div>
+
+        <div v-else>
+          <p>ログインしてない</p>
+        </div>
+
       </div>
-      <div v-else>
-        <p>ログインしてない</p>
-      </div>
+      
     </div>
   </template>
   <script>
   import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+  import { onAuthStateChanged } from "firebase/auth";
   
   export default {
     data() {
@@ -34,6 +43,18 @@
         password: "",
         userMail: "",
       };
+    },
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // ログイン状況
+            this.isLoggedIn = true;
+        } else {
+            // ログアウト状況
+            this.isLoggedIn = false;
+        }
+        });
     },
     methods: {
       checkAccount() {
@@ -75,4 +96,6 @@
     },
   };
   </script> 
+
+<style src="../css/SingIn.css"></style>
   
