@@ -6,8 +6,12 @@ const router = express.Router();
 router.post("/doubleClick", function(req, res){
     //req.body.フロントエンド側で送ったデータ名で、中身を取り出せる！
     console.log(req.params, req.body);
-    //データベースに登録する
-    //dbController.findOne(req, res);
+    dbController.findOne(req, res);
+})
+
+router.get("/all", function(req, res){
+    console.log(req.params, req.body);
+    dbController.findAllData(req, res);
 })
 
 module.exports = router;

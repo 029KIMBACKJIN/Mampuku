@@ -3,6 +3,7 @@
         MindMapDraw内であればドラッグを有効にする。ドラッグ中に枠から出たら強制的にドラッグ解除
     -->
     <div id = "MindMapDraw" 
+    style="position: relative;"
     v-on:dblclick="mouseDoubleClick($event)"
     v-on:position="setLinePosition"
     >
@@ -19,6 +20,7 @@
 <script>
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
+import axios from 'axios';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
 
@@ -29,12 +31,14 @@ export default{
     name: "MindMapDraw",
     props: {
         isTaskCreated:Boolean,
+        isTaskEdit:Boolean,
         resDatas:Object,
-        width:{type:Number,default:500},
-        height:{type:Number,default:500}
+        width:{type:Number,default:10000},
+        height:{type:Number,default:10000}
     },
     data: () => ({
         isCreateNode:false,
+        isEditNode:false,
         nodes:[]
     }),
     components: {
@@ -48,8 +52,20 @@ export default{
         svg.setAttribute("width", this.width);
         svg.setAttribute("height", this.height);
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
-        svg.setAttribute("style", "background-color:#FFFFFF");
-        document.getElementById("MindMapDraw").appendChild(svg);     
+        svg.setAttribute("style", "background-color:aqua");
+        document.getElementById("MindMapDraw").appendChild(svg);  
+        
+        //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
+        //現在は無作為だが、ユーザIDで検索ができたらそれに変更する。
+        axios.get("/MindMap/all")
+        .then((res) =>{
+            console.log(res.data);
+            for(var i = 0; i < res.data.length; i++){
+                this.createNode(res.data[i]);
+            }
+        }).catch((e)=>{
+            alert(e);
+        })
     }
     ,
     watch:{
@@ -64,10 +80,44 @@ export default{
             this.resDatas.parentId + "\n" + 
             this.resDatas.childId );
 
+            this.createNode(this.resDatas);
+        },
+        isTaskEdit:function(){
+            //ページのリロードするとデータが失われるので、その時はエラーする。
+            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
+            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
+            console.log(this.nodes[0].data);
+        }
+    },
+    methods:{
+        mouseDoubleClick: function(event){
+            console.log("ダブルクリックした。データ：" + event.target.id);
+            //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
+            if(event.target.id != "canvas"){
+                axios.post("/MindMap/doubleClick", {
+                    id: event.target.id
+                })
+                .then((res) => {
+                    //alert(res.data.title);
+                    this.isEditNode = !this.isEditNode;
+                    this.$emit("isEditFlag", this.isEditNode);
+                    this.$emit("resEditDatas", res.data);
+                })
+                .catch((e)=>{
+                    alert(e);
+                })
+            }
+        },
+        mouseClickUp:function(){
+        },
+        createNode:function(data){
             //コンポーネントを生成する
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
+            wrapper.setAttribute("id", "node_" + this.nodes.length);
+            //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
+            //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
             Component.mount(wrapper);
 
@@ -75,23 +125,18 @@ export default{
             //var ParentComponent = ;
             //タスク作成画面から得た情報から、タスク名を取り出す
             //var taskName = ;
-
             //データベースに登録されているタスクのid, 名前を代入する。
-            Component._instance.data.TaskNode.id = this.resDatas.id;
-            Component._instance.data.TaskNode.taskName = this.resDatas.title;
-            Component._instance.data.ParentNode.id = this.resDatas.parentId;
-            Component._instance.data.ChildNode.id = this.resDatas.childId;
-            //データベースに親ノードの子ノード情報を更新する。
+            Component._instance.data.TaskNode.id = data.id;
+            Component._instance.data.TaskNode.taskName = data.title;
+            Component._instance.data.ParentNode.id = data.parentId;
+            Component._instance.data.ChildNode.id = data.childId;
+            Component._instance.data.TaskNode.drawHeight = this.height;
+            Component._instance.data.TaskNode.deadline = data.deadline;
 
-            this.nodes.push(Component._instance);
-
-            if(this.nodes.length >= 2){
-                this.nodes[1].data.ParentNode.node = this.nodes[0];
-                this.nodes[0].data.ChildNode.node = this.nodes[1];
-                console.log("親ノードと子ノードの情報取得（仮）");
-            }
 
             //lineタグを生成
+            //Component._instanceがchildNodeか、parentNodeのidが-1ではないならそこだけ線を描画する。
+            //ただし線の描画はノードの数が偶数個のときだけ
             const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line1.setAttribute("id", "line1");
             line1.setAttribute("x1", Component._instance.data.TaskNode.x);
@@ -101,20 +146,57 @@ export default{
             line1.setAttribute('stroke', '#008080');
             line1.setAttribute('stroke-width', 5);
 
+            //親ノードへの線を設定する
+            Component._instance.data.TaskNode.line1 = line1;
+            //データベースに親ノードの子ノード情報を更新する。
+
+            this.nodes.push(Component._instance);
+            if(this.nodes.length >= 2){
+                //親ノードと子ノードのインスタンスをお互いに設定する
+                var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
+                var parent = this.nodes[data.parentId - 1];
+                //[1].parentNode.node = [0]...
+                //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
+                child.data.ParentNode.node = parent;
+                //[0].childNode.node = [1]...
+                if(parent != null){
+                    parent.data.ChildNode.node = child;
+                }
+                //子ノードへの線を設定する
+                if(Component._instance.data.ParentNode.node != null){
+                    Component._instance.data.ParentNode.node.data.TaskNode.line2 = line1;
+                }
+            }
             document.getElementById("canvas").appendChild(line1);
+            /*
+            if(Component._instance.data.ParentNode.id >= 0 && this.nodes.length % 2 == 0){
+            }
+            if(Component._instance.data.ChildNode.id >= 0 && this.nodes.length % 2 == 0){
+            }
+            */
+           /*
+            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line2.setAttribute("id", "line2");
+            line2.setAttribute("x1", Component._instance.data.TaskNode.x);
+            line2.setAttribute("y1", Component._instance.data.TaskNode.y);
+            line2.setAttribute("x2", Component._instance.data.ChildNode.x);
+            line2.setAttribute("y2", Component._instance.data.ChildNode.y);
+            line2.setAttribute('stroke', '#008080');
+            line2.setAttribute('stroke-width', 5);
+
+            Component._instance.data.TaskNode.line2 = line2;
+            if(Component._instance.data.ChildNode.node != null){
+                Component._instance.data.ChildNode.node.TaskNode.line1 = line2;
+            }
+            document.getElementById("canvas").appendChild(line2);
+            */
 
             console.log("登録されているノード一覧\n\n" + this.nodes);
             //MindMapDrawというidを持つ要素の中に入れる
+
+
             document.getElementById("MindMapDraw").appendChild(wrapper);
-        }
-    },
-    methods:{
-        mouseDoubleClick: function(){
-        },
-        mouseClickUp:function(){
-        },
-        setLinePosition:function(event){
-            console.log(event);
+
         }
     }
 }

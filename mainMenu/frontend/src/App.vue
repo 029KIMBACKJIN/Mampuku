@@ -10,7 +10,7 @@
         <MenuBar/>
       </div>
       <div class = "MindMap">
-        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"/>        
+        <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit"/>        
       </div>
     </div>
     <!--右側-->
@@ -25,6 +25,9 @@
       <div class = "TaskAdd">
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
+      <div class = "TaskEdit">
+        <TaskEdit v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2" :isNodeEdit="isEditFlag" :currentNodeDatas="resDatas" v-on:editFlag="sendEditToMindMapDraw" v-on:resEditDatas="sendToMindMapDraw2"/>        
+      </div>
     </div>
   </div>    
 </template>
@@ -38,12 +41,15 @@
   import AccountSet from './components/right/vue/AccountSet.vue'
   import CalenderDate from './components/right/vue/Calender.vue'
   import TaskAdd from './components/right/vue/TaskAdd.vue'
+  import TaskEdit from './components/right/vue/TaskEdit.vue'
 
   //componentsに追加することで、上記のtemplateタグで表示できる？
   export default {
     name: 'App',
     data: ()=>({
       isTaskCreated:false,
+      isEditFlag:false,
+      isTaskEdit:false,
       resDatas:{}
     }),
     components: {
@@ -53,12 +59,17 @@
       MindMap,
       AccountSet,
       CalenderDate,
-      TaskAdd
+      TaskAdd,
+      TaskEdit
     },
     methods:{
       sendToMindMapDraw:function(event){
         console.log(event + "のデータをTaskAddから受け取りました");
         this.isTaskCreated = event;
+      },
+      sendEditToMindMapDraw:function(event){
+        console.log(event + "のデータをTaskEditから受け取りました");
+        this.isTaskEdit = event;
       },
       sendToMindMapDraw2:function(event){
         console.log("MindMapDrawに送るデータたち\n" + 
@@ -70,6 +81,12 @@
         event.parentId + "\n" + 
         event.childId );
 
+        this.resDatas = event;
+      },
+      sendFlagToEdit:function(event){
+        this.isEditFlag = event;
+      },
+      sendDatasToEdit:function(event){
         this.resDatas = event;
       }
     }

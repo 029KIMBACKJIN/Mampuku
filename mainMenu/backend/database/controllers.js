@@ -1,4 +1,5 @@
 const db = require("./models");
+const temp = require("./originModules/task");
 //テーブルモデルを取り出す。Tutorialとなっているが、tasksテーブルと思っていい
 const tasks = db.task_db;
 const Op = db.Sequelize.Op;
@@ -12,6 +13,16 @@ exports.create = (req, res) => {
       });
       return;
     }
+  
+    // Create a Tutorial
+    /*
+    const tutorial = {
+      title: req.body.title,
+      description: req.body.description,
+      published: req.body.published ? req.body.published : false
+    };
+    */
+    // const task = temp.taskTemp(req);
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
@@ -39,9 +50,9 @@ exports.create = (req, res) => {
 // 未完成
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
+    const id = req.body.id;
 
     var condition = title ? { id: { [Op.like]: `%${id}%` } } : null;
-  
     //{内に、select文などのsql文を記載すれば取れるはず？}
     tasks.findAll({ where: condition })
       .then(task => {
@@ -54,6 +65,23 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
+
+//追加
+exports.findAllData = (req, res) => {
+  //{内に、select文などのsql文を記載すれば取れるはず？}
+  tasks.findAll()
+    .then(task => {
+      res.send(task);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
+};
+
 
 // フロントからIDをもらってDBで検索
 exports.findOne = (req, res) => {
@@ -106,11 +134,7 @@ exports.findWithIdAll = (req, res) => {
 exports.update = (req, res) => {
     const id = req.body.id;
 
-    const task = {
-      //左側の名前は、model.jsのカラム名と一致している必要がある。
-      id: req.body.id,
-      title: req.body.title + " updated"
-    }
+    const task = temp.taskTemp(req);
 
     //idが一致するものを修正する。
     tasks.update(task, {
@@ -118,7 +142,7 @@ exports.update = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          res.send("更新に成功");
+          res.send(task);
         } else {
           res.send("更新に失敗しました！");
         }
