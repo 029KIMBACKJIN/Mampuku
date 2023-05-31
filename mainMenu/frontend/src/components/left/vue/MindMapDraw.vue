@@ -33,6 +33,7 @@ export default{
     props: {
         isTaskCreated:Boolean,
         isTaskEdit:Boolean,
+        isTaskDelete:Boolean,
         resDatas:Object,
         width:{type:Number,default:10000},
         height:{type:Number,default:10000}
@@ -91,6 +92,34 @@ export default{
             this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
             this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
             console.log(this.nodes[0].data);
+        },
+        isTaskDelete:function(){
+            //削除命令が執行されたら
+            var i = this.resDatas.id - 1;
+            var node = this.nodes[i].data;
+            var parentNode = node.ParentNode.node;
+            var childNode = node.ChildNode.node;
+            if(parentNode != null){
+                //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
+                for(var j = 0; j < parentNode.data.ChildNode.node.length; j++){
+                    //見つかったら削除
+                    if(parentNode.data.ChildNode.node[j].data.TaskNode.id == this.resDatas.id){
+                        console.log("見つかった！");
+                        parentNode.data.ChildNode.node.splice(j, 1);
+                    }                    
+                }
+            }
+            if(childNode.length != 0){
+                //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
+                for(j = 0; j < childNode.length; j++){
+                    //子供たちを削除する親ノードにつなげる
+                    childNode[j].data.ParentNode.node = parentNode;
+                    //線も同様に
+                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2;                    
+                }                
+            }
+            //splice: 開始要素番号, 何個消せるか
+            this.nodes.splice(this.resDatas.id - 1, 1);
         }
     },
     methods:{

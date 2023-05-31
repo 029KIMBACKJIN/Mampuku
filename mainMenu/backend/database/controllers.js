@@ -159,16 +159,15 @@ exports.update = (req, res) => {
 
 // Delete a Tutorial with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    const id = req.body.id;
+    const task = temp.taskTemp(req);
   
     tasks.destroy({
       where: { id: id }
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "Tutorial was deleted successfully!"
-          });
+          res.send(task);
         } else {
           res.send({
             message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`

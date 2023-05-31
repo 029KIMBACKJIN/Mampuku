@@ -38,7 +38,8 @@
             </p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
           </form>
-        <button v-on:click="createTask">タスク登録(Edit Task)</button>
+          <button v-on:click="createTask">タスク登録(Edit Task)</button>
+          <button v-on:click="deleteTask" style="color: red;">タスク削除(Delete Task)</button>
         </div>
       </div>
   </div>
@@ -47,6 +48,8 @@
 
 <script>
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+
 
 export default{
     name:"TaskEdit",
@@ -122,6 +125,8 @@ export default{
       createTask: function() {
         //送信ボタンを押したとき
         //データを送りたい場合はpost（express側も）と書いてリクエストする
+        const user = getAuth().currentUser;
+        const uid = user.id;
         var datas = this.currentNodeDatas;
         axios.post("/TaskEdit/update", {
           //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
@@ -131,7 +136,8 @@ export default{
           deadline:this.inputDeadLine,
           complete:this.inputComplete,
           parentId:datas.parentId,
-          childId:datas.childId
+          childId:datas.childId,
+          userId: uid
         }).then((res) =>{
           //レスポンスの結果を表示
                 alert("データを変更しました。\n変更内容" + 
@@ -165,6 +171,61 @@ export default{
         }).catch((e) =>{
           alert(e);
         })
+      },
+      deleteTask:function(){
+        var ok = window.confirm("本当に削除しますか？");
+        //「OK」ボタンを押したなら
+        if(ok){
+          //送信ボタンを押したとき
+          //データを送りたい場合はpost（express側も）と書いてリクエストする
+          const user = getAuth().currentUser;
+          const uid = user.id;
+          var datas = this.currentNodeDatas;
+          axios.post("/TaskEdit/delete", {
+            //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
+            id:datas.id,
+            title: this.inputTaskName,
+            contents:this.inputTaskContent,
+            deadline:this.inputDeadLine,
+            complete:this.inputComplete,
+            parentId:datas.parentId,
+            childId:datas.childId,
+            userId: uid
+          }).then((res) =>{
+            //レスポンスの結果を表示
+                alert("データを削除しました。\n削除内容" + 
+                "\nタイトル：" + res.data.title +
+                "\n内容：" + res.data.contents + 
+                "\n締め切り日：" + res.data.deadline +  
+                "\n達成状況：" + (res.data.complelte ?"達成":"未達成"));
+            //正常にデータベースに登録されたら、親コンポーネントを通じて、MindMapDraw.vueへデータを渡す。
+            //createdFlagという名前でtrueというデータを親コンポーネントに渡す
+            //変更されたかどうかをMindMapDrawで検知したいので、実行されるたびに変数の値を入れ替える
+            //userIdはいらないので送らない
+            this.resData = {
+              id: res.data.id,
+              title: res.data.title,
+              contents: res.data.contents,
+              deadline: res.data.deadline,
+              complete: res.data.complelte,
+              parentId: res.data.parentId,
+              childId: res.data.childId
+            }
+            this.isTaskEditSwitch = !this.isTaskEditSwitch;
+            this.$emit("deleteFlag", this.isTaskEditSwitch);
+            this.$emit("resDeleteData", this.resData);
+
+            //入力内容をクリアする
+            this.taskName = "";
+            this.taskContent = "";
+            this.deadline = null;
+            this.complete = false;
+
+            this.isTaskFormOpen = false;
+          }).catch((e) =>{
+            alert(e);
+          })
+        }
       },
       clickCreateTask : function() {
         if(this.isTaskFormOpen == true) {

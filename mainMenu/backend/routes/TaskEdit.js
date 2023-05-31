@@ -7,4 +7,9 @@ app.post("/update", function(req, res){
     dbController.update(req, res);
 });
 
+app.post("/delete", function(req, res){
+    console.log(req.body.id);
+    dbController.delete(req, res);
+});
+
 module.exports = app;
