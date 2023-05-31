@@ -44,7 +44,7 @@ exports.create = (req, res) => {
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while creating the Tutorial."
+            err.message || "Some error occurred while creating the task."
         });
       });
   };
@@ -63,10 +63,11 @@ exports.findAll = (req, res) => {
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving tasks."
         });
       });
   };
+
 
 //追加
 exports.findAllData = (req, res) => {
@@ -109,11 +110,11 @@ exports.findOne = (req, res) => {
   // フロントからIDをもらってDBで検索
 exports.findWithIdAll = (req, res) => {
   // Axiosから送られたBodyを分析してIDをとる
-  // Axiosから送られたBodyを分析してIDをとる
   const uid = req.body.uid;
 
+
   var condition = {
-    content: {
+    userId: {
       [Op.like]: `%${uid}%`
     }
   };
@@ -121,6 +122,7 @@ exports.findWithIdAll = (req, res) => {
 
   tasks.findAll({ where: condition })
     .then(task => {
+      console.log(task);
       res.send(task);
     })
     .catch(err => {
@@ -152,7 +154,7 @@ exports.update = (req, res) => {
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating Tutorial with id=" + id
+          message: "Error updating task with id=" + id
         });
       });
   };
@@ -160,8 +162,10 @@ exports.update = (req, res) => {
 // Delete a Tutorial with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.body.id;
+
     const task = temp.taskTemp(req);
   
+
     tasks.destroy({
       where: { id: id }
     })
@@ -170,44 +174,44 @@ exports.delete = (req, res) => {
           res.send(task);
         } else {
           res.send({
-            message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+            message: `Cannot delete task with id=${id}. Maybe task was not found!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Could not delete Tutorial with id=" + id
+          message: "Could not delete task with id=" + id
         });
       });
   };
 
-// Delete all Tutorials from the database.
+// Delete all task from the database.
 exports.deleteAll = (req, res) => {
   tasks.destroy({
       where: {},
       truncate: false
     })
       .then(nums => {
-        res.send({ message: `${nums} Tutorials were deleted successfully!` });
+        res.send({ message: `${nums} tasks were deleted successfully!` });
       })
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while removing all tutorials."
+            err.message || "Some error occurred while removing all tasks."
         });
       });
   };
 
-// Find all published Tutorials
-exports.findAllPublished = (req, res) => {
-    Tutorial.findAll({ where: { published: true } })
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving tutorials."
-        });
-      });
-  };
+// // Find all published Tutorials
+// exports.findAllPublished = (req, res) => {
+//     Tutorial.findAll({ where: { published: true } })
+//       .then(data => {
+//         res.send(data);
+//       })
+//       .catch(err => {
+//         res.status(500).send({
+//           message:
+//             err.message || "Some error occurred while retrieving tasks."
+//         });
+//       });
+//   };
