@@ -21,6 +21,7 @@
 import MindMapNode from './MindMapNode.vue';
 import { createApp } from "vue"
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 //ここにタスク追加画面用のvueファイルをインポートしてパラメータを貰う。
 //そのパラメータの状態によってv-ifでイベントを発火させる。
 
@@ -57,7 +58,10 @@ export default{
         
         //リロードするとデータ（フロント側のみ）が消えてしまうので、リロードの際に、ユーザーの全てのデータを取り出すようにする。
         //現在は無作為だが、ユーザIDで検索ができたらそれに変更する。
-        axios.get("/MindMap/all")
+        const user = getAuth().currentUser;
+        axios.post("/MindMap/all",{
+            userId: user
+        })
         .then((res) =>{
             console.log(res.data);
             for(var i = 0; i < res.data.length; i++){

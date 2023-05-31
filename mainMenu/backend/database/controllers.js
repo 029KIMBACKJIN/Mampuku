@@ -22,7 +22,8 @@ exports.create = (req, res) => {
       published: req.body.published ? req.body.published : false
     };
     */
-    //const task = temp.taskTemp(req);
+    const task = temp.taskTemp(req);
+    /*
     const task = {
       //左側の名前は、model.jsのカラム名と一致している必要がある。
       id: req.body.id,
@@ -30,11 +31,11 @@ exports.create = (req, res) => {
       contents: req.body.contents,  
       deadline: req.body.deadline,
       complelte: req.body.complete,
-      parentId: -1,   //不明
-      childId: -1,    //不明
+      parentId: req.body.parentId,   //不明
+      childId: req.body.childId,    //不明
       userId: req.body.userId
-    }
-    console.log("登録情報：" + task);
+    }*/
+    console.log("登録情報：" + task.toString());
     // Save Tutorial in the database
     tasks.create(task)
       .then(task => {
