@@ -11,7 +11,7 @@ router.post("/doubleClick", function(req, res){
 
 router.post("/all", function(req, res){
     console.log(req.params, req.body);
-    dbController.findAllData(req, res);
+    dbController.findWithIdAll(req, res);
 })
 
 module.exports = router;
