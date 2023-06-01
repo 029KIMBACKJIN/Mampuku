@@ -14,14 +14,15 @@
           <button type="submit">Sign In</button>
         </form>
       </div>
-      
-    </div>
+    </div>  
+
   </template>
   <script>
   import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
   import { onAuthStateChanged } from "firebase/auth";
   
   export default {
+    name: 'SignIn',
     data() {
       return {
         email: "",
@@ -66,6 +67,7 @@
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
             this.$store.dispatch('login', { username: 'example', password: 'password' });
+
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -84,6 +86,9 @@
         // An error happened.
         console.log(error);
         });
+      },
+      closeModal() {
+        this.$emit('close-modal');
       }
     },
   };

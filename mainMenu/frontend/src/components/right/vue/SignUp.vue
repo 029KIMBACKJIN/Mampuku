@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>CreateanAccount</h1>
+
     <div class = "SignUp">
       <form @submit.prevent="signUp">
         <div>
