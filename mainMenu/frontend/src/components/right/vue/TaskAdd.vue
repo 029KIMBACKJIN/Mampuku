@@ -134,7 +134,6 @@ export default{
         else this.isTaskFormOpen = true;
       },
       createTask: function() {
-
         const user = getAuth().currentUser;
         if (user) {
           // ログインした人のUID
@@ -169,7 +168,7 @@ export default{
               parentId: res.data.parentId,
               childId: res.data.childId,
               userId: res.data.userId
-            }
+            },
             this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
             this.$emit("createdFlag", this.isTaskCreatedSwitch);
             this.$emit("resDatas", this.resDatas);

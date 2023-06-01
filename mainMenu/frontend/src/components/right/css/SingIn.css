@@ -1,6 +1,29 @@
-.SignIn{
+
+.SignIn {
     text-align: center;
-    background-color: white;
-    height: 20vw;
-    margin:2%;
-}
+  }
+  
+  .SignIn form {
+    display: table;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  .SignIn form div {
+    display: table-row;
+  }
+  
+  .SignIn form div label,
+  .SignIn form div input {
+    display: table-cell;
+    padding: 10px;
+    border: 1px solid black;
+  }
+  
+  .SignIn form button {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+  }
+  
+

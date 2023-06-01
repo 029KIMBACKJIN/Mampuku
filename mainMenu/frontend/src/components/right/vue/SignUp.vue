@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Mampuku</h1>
-    <h2>CreateanAccount</h2>
+    <h1>CreateanAccount</h1>
+
     <div class = "SignUp">
       <form @submit.prevent="signUp">
         <div>
@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       email: "",
-      password: "",
+      password: ""
     };
   },
   mounted() {
