@@ -117,6 +117,7 @@ export default{
                     this.ChildNode.node[i].data.ParentNode.y = this.TaskNode.y;
                 }
                 */
+               //varは関数スコープで、letがブロックスコープらしい。
                 //子ノードが親ノードの位置を記憶
                 for(var i = 0; i < childKeys.length; i++){
                     this.ChildNode.node[childKeys[i]].data.ParentNode.x = this.TaskNode.x;
@@ -188,7 +189,7 @@ export default{
                 var r = rgb[1] + rgb[2];  //FF
                 var g = rgb[3] + rgb[4];  //FF
                 var b = rgb[5] + rgb[6];  //FF
-
+                //ここらへんの数値計算に誤りがあるらしいNANと表示されるから
                 //計算した日数から位置やサイズを計算する
                 //位置は初期位置からdays分割した値だけ上昇するように設定。横は設定しない
                 //this.TaskNode.y -= this.TaskNode.y / days;
