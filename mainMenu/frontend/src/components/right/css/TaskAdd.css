@@ -1,27 +1,77 @@
 .TaskAdd{
     text-align: center;
     background-color: white;
-    height: 39vw;
     margin:2%;
     position: relative;
 }
+.TaskAdd h1{
+    font-size: 300%;
+}
+
+form {
+    /* 폼 전체 크기 조정 */
+    width: 14vw;
+    display: inline;
+  }
+  
+  form input,
+  form select {
+    /* 입력 필드의 너비 조정 */
+    width: 100%;
+  }
+  
+  form p {
+    /* 문단 요소의 너비 조정 */
+    width: 100%;
+  }
+  
 p{
     font-size:larger;
     font-weight: 700;
 }
 
-.black-bg{
+/* .black-bg{
+    display: inline-block;
     width: 23vw;
-    height: 35vw;
     background: rgba(0, 0, 0, 0.5);
-    position: relative;  /*fixed => relativeに変更*/
+    position: relative; 
     padding: 20px;
-}
+} */
 
-.white-bg{
+/* .white-bg{
+    display: inline-block;
     width: 20vw;
-    height: 32vw;
     background: white;
     border-radius: 30px;
     padding: 20px;
+} */
+
+.TaskAddHelpButton {
+    position: absolute;
+    top: 0.5vh;
+    right: 0.5vw;
 }
+
+.TaskAddQuestionButton {
+    width: 3vw;
+    height: 3vw;
+    background-color: gray;
+    font-size: 200%;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+}
+
+.taskadd-modal-container {
+    position: absolute;
+    top: 8vh;
+    right: 5vw;
+    width: 30vw;
+    text-align: center;
+  }
+  
+  .taskadd-modal-content {
+    background-color: white;
+    padding: 20px;
+  }

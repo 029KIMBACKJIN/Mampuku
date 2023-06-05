@@ -1,6 +1,9 @@
 <template>
     <div class = "TaskAdd">
         <h1>タスク追加</h1>
+        <div class="TaskAddHelpButton">
+            <button class="TaskAddQuestionButton" @click="openModal">?</button>
+        </div>
         <!--
         <button @click="clickCreateTask()">Create Task</button>
         -->
@@ -11,17 +14,17 @@
                 <svg v-if="inputTaskName == ''" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
                   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
                 </svg>
-                タスク名(Task Name)
+                タスク名 <!-- (Task Name) -->
               </p>
               <p v-else>
-                タスク名(Task Name)
+                タスク名 <!-- (Task Name) -->
               </p>
               <!--v-modelで変数の中身の変更をリアルタイムで監視する-->
               <input v-model="inputTaskName" type = "text" id = "taskName" name = "task name">
 
               <br><br>
               <p>
-                タスク内容(Task Contents)
+                タスク内容 <!-- (Task Contents) -->
               </p>
               <input v-model="inputTaskContent" type = "text" id = "taskContent" name = "task contents">
 
@@ -29,30 +32,37 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
                   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
                 </svg>
-                締め切り日(dead line)
+                締め切り日 <!-- (dead line) -->
               </p>
               <p v-else>
-                締め切り日(dead line)
+                締め切り日 <!-- (dead line) -->
               </p>
               <input v-model="inputDeadLine" type = "date" id = "deadLine" name = "dead line">
 
               <br><br><p>
-                終了フラグ(complelete)
+                終了フラグ <!-- (complelete) -->
               </p>
               <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
               <br><br>
               <p>
-                親ノード(oarentNode)
+                親ノード <!-- (oarentNode) -->
               </p>
               <select v-model="select" name="nodes" id="TaskNodes" v-on:mousedown="selectNodes">
                 <option value="">親ノード選択</option>
               </select>
               <br><br>
             </form>
-            <button v-on:click="createTask">タスク登録(Create Task)</button>
+            <button v-on:click="createTask">タスク登録 <!-- (Create Task) --></button>
+          </div>
+        </div>
+        <div class="taskadd-modal-container" v-if="isModalOpen" @click="closeModal">
+          <div class="taskadd-modal-content">
+            <p>{{ modalContent }}</p>
           </div>
         </div>
     </div>
+
+   
 
 </template>
 
@@ -77,7 +87,9 @@ export default{
         complete:false,
         parentId: -1,
         childId: -1,
-        userId:""
+        userId:"",
+        isModalOpen: false,
+        modalContent: "登録したタスクが下の領域に表示されます。"
     }),
     computed:{
       //値の監視？
@@ -129,6 +141,12 @@ export default{
       }
     },
     methods: {
+      openModal() {
+        this.isModalOpen = true;
+      },
+      closeModal() {
+        this.isModalOpen = false;
+      },
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
         else this.isTaskFormOpen = true;
