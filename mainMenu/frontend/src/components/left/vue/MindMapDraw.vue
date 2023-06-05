@@ -87,7 +87,8 @@ export default{
             var node = this.nodes[i].data;  //対象ノードのキーを取得
             var parentNode = node.ParentNode.node;
             var childNode = node.ChildNode.node;
-            //親ノードがいる場合
+            console.log("削除ノード：" + node + "親ノード：" + parentNode + "子ノード：" + childNode);
+            //削除するノードに親ノードがいる場合
             if(parentNode != null){
                 //親ノードが持つ子ノードのキーの配列
                 let parentChildKeys = Object.keys(parentNode.data.ChildNode.node);
@@ -95,7 +96,7 @@ export default{
                 for(var j = 0; j < parentChildKeys.length; j++){
                     //見つかったら削除
                     if(parentNode.data.ChildNode.node[parentChildKeys[j]].data.TaskNode.id == this.resDatas.id){
-                        console.log("見つかった！");
+                        console.log("見つかった！ノードキー：" + parentChildKeys[j]);
                         //親ノードに登録されている子ノードを削除。
                         delete parentNode.data.ChildNode.node[parentChildKeys[j]];
                         //削除対象につながっているline2も同様に削除
@@ -103,7 +104,7 @@ export default{
                     }                    
                 }
             }
-            //子ノードがいる場合
+            //削除するノードに子ノードがいる場合
             if(childNode != {}){
                 //親ノードが持つ子ノードのキー(こっちは配列ではない)
                 //let ParentKey = parentNode.data.TaskNode.id;
@@ -114,22 +115,28 @@ export default{
                     if(parentNode == null){
                         //親ノードと、親ノードに向かう線をnullに
                         childNode[childKeys[j]].data.ParentNode.node = null;
+                        childNode[childKeys[j]].data.ParentNode.x = 0;
+                        childNode[childKeys[j]].data.ParentNode.y = 0;
                         childNode[childKeys[j]].data.TaskNode.line1 = null;
                     }
                     else{
                         //子供たちを削除する親ノードにつなげる
                         childNode[childKeys[j]].data.ParentNode.node = parentNode;
+                        //childNodeのParentNodeの座標の参照先をparentNodeにしておく処理を追記
+
                         //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
-                        parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
-                        childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];                    
+                        childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+                        childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];
                     }
                 }                
             }
             //該当の辞書要素を削除
             delete this.nodes[i];
-            //htmlを削除
-            var element = document.getElementById("node_" + i);
+            //ノードと線のhtmlを削除
+            let element = document.getElementById("node_" + i);
+            let line1Element = document.getElementById("line1_" + i);
             element.remove();
+            line1Element.remove();
         }
     },
     methods:{
@@ -202,7 +209,7 @@ export default{
             //Component._instanceがchildNodeか、parentNodeのidが-1ではないならそこだけ線を描画する。
             //ただし線の描画はノードの数が偶数個のときだけ
             const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line1.setAttribute("id", "line1");
+            line1.setAttribute("id", "line1_" + data.id);
             line1.setAttribute("x1", Component._instance.data.TaskNode.x);
             line1.setAttribute("y1", Component._instance.data.TaskNode.y);
             line1.setAttribute("x2", Component._instance.data.ParentNode.x);
