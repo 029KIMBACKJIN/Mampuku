@@ -51,14 +51,14 @@ export default{
             taskName:"タスク名",        
             clicking:false,
             line1:null,   //親ノードへの線
-            line2:[],    //子ノードへの線
+            line2:{},    //子ノードへの線
             currentDate:null,  //現在時刻
             intervalId:null,
             deadline:null   //締め切り日
 
         },
         ChildNode:{
-            node:[],
+            node:{},
             x:100,
             y:0
         },
@@ -68,6 +68,9 @@ export default{
     mounted(){
         //1秒単位で現在時刻を更新する。
         this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
+    },
+    watch:{
+
     },
     methods:{
         mouseDoubleClick: function(){
@@ -102,8 +105,10 @@ export default{
                 this.ParentNode.node.data.ChildNode.x = this.TaskNode.x;
                 this.ParentNode.node.data.ChildNode.y = this.TaskNode.y;
             }
+            var childKeys = Object.keys(this.ChildNode.node);
             if(this.ChildNode.node.length != 0){
                 //現在ノードが子ノードの位置を記憶
+                /*
                 this.ChildNode.x =  this.ChildNode.node[0].data.TaskNode.x;
                 this.ChildNode.y =  this.ChildNode.node[0].data.TaskNode.y;
                 //子ノードが親ノードの位置を記憶
@@ -111,6 +116,14 @@ export default{
                     this.ChildNode.node[i].data.ParentNode.x = this.TaskNode.x;
                     this.ChildNode.node[i].data.ParentNode.y = this.TaskNode.y;
                 }
+                */
+               //varは関数スコープで、letがブロックスコープらしい。
+                //子ノードが親ノードの位置を記憶
+                for(var i = 0; i < childKeys.length; i++){
+                    this.ChildNode.node[childKeys[i]].data.ParentNode.x = this.TaskNode.x;
+                    this.ChildNode.node[childKeys[i]].data.ParentNode.y = this.TaskNode.y;
+                }
+
             }
             //親コンポーネントにデータを送る
             //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
@@ -129,16 +142,17 @@ export default{
             }
             //親(1)から子(多)への線
             if(this.TaskNode.line2.length != 0){
-                for(i = 0; i < this.TaskNode.line2.length; i++){
-                    this.TaskNode.line2[i].setAttribute("x1", this.TaskNode.x);
-                    this.TaskNode.line2[i].setAttribute("y1", this.TaskNode.y);                
-                    this.TaskNode.line2[i].setAttribute("x2", this.ChildNode.node[i].data.TaskNode.x);
-                    this.TaskNode.line2[i].setAttribute("y2", this.ChildNode.node[i].data.TaskNode.y);
+                //for(i = 0; i < this.TaskNode.line2.length; i++){
+                for(i = 0; i <  childKeys.length; i++){
+                    this.TaskNode.line2[childKeys[i]].setAttribute("x1", this.TaskNode.x);
+                    this.TaskNode.line2[childKeys[i]].setAttribute("y1", this.TaskNode.y);                
+                    this.TaskNode.line2[childKeys[i]].setAttribute("x2", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
+                    this.TaskNode.line2[childKeys[i]].setAttribute("y2", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
 
-                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[i].data.TaskNode.x);
-                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[i].data.TaskNode.y);
-                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
-                    this.ChildNode.node[i].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
+                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
+                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
+                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
+                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
                 }
             }
             /*
@@ -175,7 +189,7 @@ export default{
                 var r = rgb[1] + rgb[2];  //FF
                 var g = rgb[3] + rgb[4];  //FF
                 var b = rgb[5] + rgb[6];  //FF
-
+                //ここらへんの数値計算に誤りがあるらしいNANと表示されるから
                 //計算した日数から位置やサイズを計算する
                 //位置は初期位置からdays分割した値だけ上昇するように設定。横は設定しない
                 //this.TaskNode.y -= this.TaskNode.y / days;

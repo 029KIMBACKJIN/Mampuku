@@ -53,6 +53,11 @@
             const user = userCredential.user;
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
+
+
+            //追加。MindMapDrawで感知して向こうで削除する
+            sessionStorage.setItem("login", true);
+
           })
           .catch((error) => {
             const errorCode = error.code;
