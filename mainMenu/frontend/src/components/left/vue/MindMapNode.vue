@@ -10,7 +10,7 @@
         line-height: 80px;
         "
         v-bind:style="{
-            transform: `translate(${TaskNode.x}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            transform: `translate(${TaskNode.x - 450}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
             backgroundColor: TaskNode.color
         }"  
         v-on:dblclick="mouseDoubleClick"
@@ -131,8 +131,14 @@ export default{
             if(this.TaskNode.line1 != null){
                 this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
                 this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
-                this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
-                this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
+                if(this.ParentNode.node != null){
+                    this.TaskNode.line1.setAttribute("x2", this.ParentNode.node.data.TaskNode.x);
+                    this.TaskNode.line1.setAttribute("y2", this.ParentNode.node.data.TaskNode.y);
+                }
+                else{
+                    this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
+                    this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
+                }
                 /*
                 if(this.ParentNode.node.TaskNode.line2 != null){
                     this.ParentNode.node.TaskNode.line2.setAttribute("x1", this.ParentNode.node.TaskNode.x);
@@ -144,15 +150,23 @@ export default{
             if(this.TaskNode.line2.length != 0){
                 //for(i = 0; i < this.TaskNode.line2.length; i++){
                 for(i = 0; i <  childKeys.length; i++){
-                    this.TaskNode.line2[childKeys[i]].setAttribute("x1", this.TaskNode.x);
-                    this.TaskNode.line2[childKeys[i]].setAttribute("y1", this.TaskNode.y);                
-                    this.TaskNode.line2[childKeys[i]].setAttribute("x2", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
-                    this.TaskNode.line2[childKeys[i]].setAttribute("y2", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
-
-                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
-                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
-                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
-                    this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
+                    if(this.TaskNode.line2[childKeys[i]] != null){
+                        this.TaskNode.line2[childKeys[i]].setAttribute("x1", this.TaskNode.x);
+                        this.TaskNode.line2[childKeys[i]].setAttribute("y1", this.TaskNode.y);                
+                        this.TaskNode.line2[childKeys[i]].setAttribute("x2", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
+                        this.TaskNode.line2[childKeys[i]].setAttribute("y2", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
+                        console.log("line2[" + childKeys[i] + "]を設定中");
+                    }
+                    else{
+                        console.log("line2なし：" + this.TaskNode.line2[childKeys[i]]);
+                    }
+                    if(this.ChildNode.node[childKeys[i]].data.TaskNode.line1 != null){
+                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
+                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
+                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
+                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
+                        console.log("line1[" + childKeys[i] + "]を設定中");
+                    }
                 }
             }
             /*
