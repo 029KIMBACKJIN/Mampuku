@@ -127,8 +127,8 @@ export default{
             }
             //該当の辞書要素を削除
             delete this.nodes[i];
-            //htmlを削除 idは１からなので-1する必要あり
-            var element = document.getElementById("node_" + (i - 1));
+            //htmlを削除
+            var element = document.getElementById("node_" + i);
             element.remove();
         }
     },
@@ -181,7 +181,7 @@ export default{
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
-            wrapper.setAttribute("id", "node_" + Object.keys(this.nodes).length);
+            wrapper.setAttribute("id", "node_" + data.id);
             //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
             //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
