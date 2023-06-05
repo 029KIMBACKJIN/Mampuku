@@ -58,7 +58,11 @@ export default {
           }
           console.log(errorCode, errorMessage);
         });
-    },
+        this.closeModal()
+      },
+    closeModal() {
+        this.$emit('close-modal');
+      }
   },
 };
 </script>

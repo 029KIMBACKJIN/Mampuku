@@ -6,6 +6,7 @@
     display: table;
     margin: 0 auto;
     border-collapse: collapse;
+    width: 30vw;
   }
   
   .SignUp form div {
