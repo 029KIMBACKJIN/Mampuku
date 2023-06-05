@@ -101,13 +101,14 @@ export default{
                         delete parentNode.data.ChildNode.node[parentChildKeys[j]];
                         //削除対象につながっているline2も同様に削除
                         delete parentNode.data.TaskNode.line2[parentChildKeys[j]];
+
+                        //削除は１つだけなのでループを出る
+                        break;
                     }                    
                 }
             }
             //削除するノードに子ノードがいる場合
-            if(childNode != {}){
-                //親ノードが持つ子ノードのキー(こっちは配列ではない)
-                //let ParentKey = parentNode.data.TaskNode.id;
+            if(Object.keys(childNode).length != 0){
                 let childKeys = Object.keys(childNode);
                 //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
                 for(j = 0; j < childKeys.length; j++){
@@ -120,13 +121,15 @@ export default{
                         childNode[childKeys[j]].data.TaskNode.line1 = null;
                     }
                     else{
-                        //子供たちを削除する親ノードにつなげる
+                        //親ノードに親から子への線の情報を紐づける
+                        parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+
+                        //子供たちを、削除するノードの親ノードにつなげる
                         childNode[childKeys[j]].data.ParentNode.node = parentNode;
                         //childNodeのParentNodeの座標の参照先をparentNodeにしておく処理を追記
 
                         //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
-                        childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
-                        childNode[childKeys[j]].data.ParentNode.x = parentNode.data.TaskNode.x;
+                        //childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
                         childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];
                     }
                 }                
