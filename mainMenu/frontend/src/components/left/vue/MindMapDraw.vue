@@ -57,7 +57,7 @@ export default{
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
         svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);  
-        
+
         //1秒間隔で処理を呼ぶ。
         this.findUserIntervalID = setInterval(this.findUser, 1000);
     }
@@ -126,11 +126,13 @@ export default{
 
                         //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
                         childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+                        childNode[childKeys[j]].data.ParentNode.x = parentNode.data.TaskNode.x;
                         childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];
                     }
                 }                
             }
             //該当の辞書要素を削除
+            clearInterval(this.nodes[i].data.TaskNode.intervalId);
             delete this.nodes[i];
             //ノードと線のhtmlを削除
             let element = document.getElementById("node_" + i);
@@ -201,6 +203,7 @@ export default{
             //データベースに登録されているタスクのid, 名前を代入する。
             Component._instance.data.TaskNode.id = data.id;
             Component._instance.data.TaskNode.taskName = data.title;
+            Component._instance.data.TaskNode.drawWidth = 200;
             Component._instance.data.TaskNode.drawHeight = this.height;
             Component._instance.data.TaskNode.deadline = data.deadline;
 

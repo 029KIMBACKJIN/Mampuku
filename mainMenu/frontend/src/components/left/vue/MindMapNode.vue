@@ -10,7 +10,7 @@
         line-height: 80px;
         "
         v-bind:style="{
-            transform: `translate(${TaskNode.x - 450}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            transform: `translate(${TaskNode.x - TaskNode.drawWidth}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
             backgroundColor: TaskNode.color
         }"  
         v-on:dblclick="mouseDoubleClick"
@@ -168,6 +168,9 @@ export default{
                         console.log("line1[" + childKeys[i] + "]を設定中");
                     }
                 }
+            }
+            else{
+                console.log("line2がない");
             }
             /*
             console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
