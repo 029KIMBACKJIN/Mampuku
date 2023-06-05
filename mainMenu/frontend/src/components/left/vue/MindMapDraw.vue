@@ -84,33 +84,52 @@ export default{
         },
         isTaskDelete:function(){
             //削除命令が執行されたら
-            var i = this.resDatas.id - 1;
-            var node = this.nodes[i].data;
+            var i = this.resDatas.id;
+            var node = this.nodes[i].data;  //対象ノードのキーを取得
             var parentNode = node.ParentNode.node;
             var childNode = node.ChildNode.node;
+            //親ノードがいる場合
             if(parentNode != null){
+                //親ノードが持つ子ノードのキーの配列
+                let parentChildKeys = Object.keys(parentNode.data.ChildNode.node);
                 //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
-                for(var j = 0; j < parentNode.data.ChildNode.node.length; j++){
+                for(var j = 0; j < parentChildKeys.length; j++){
                     //見つかったら削除
-                    if(parentNode.data.ChildNode.node[j].data.TaskNode.id == this.resDatas.id){
+                    if(parentNode.data.ChildNode.node[parentChildKeys[j]].data.TaskNode.id == this.resDatas.id){
                         console.log("見つかった！");
-                        parentNode.data.ChildNode.node.splice(j, 1);
+                        //親ノードに登録されている子ノードを削除。
+                        delete parentNode.data.ChildNode.node[parentChildKeys[j]];
+                        //削除対象につながっているline2も同様に削除
+                        delete parentNode.data.TaskNode.line2[parentChildKeys[j]];
                     }                    
                 }
             }
-            if(childNode.length != 0){
+            //子ノードがいる場合
+            if(childNode != {}){
+                //親ノードが持つ子ノードのキー(こっちは配列ではない)
+                //let ParentKey = parentNode.data.TaskNode.id;
+                let childKeys = Object.keys(childNode);
                 //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
-                for(j = 0; j < childNode.length; j++){
-                    //子供たちを削除する親ノードにつなげる
-                    childNode[j].data.ParentNode.node = parentNode;
-                    //線も同様に
-                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2[0];                    
+                for(j = 0; j < childKeys.length; j++){
+                    //もしルートノードを消したなら
+                    if(parentNode == null){
+                        //親ノードと、親ノードに向かう線をnullに
+                        childNode[childKeys[j]].data.ParentNode.node = null;
+                        childNode[childKeys[j]].data.TaskNode.line1 = null;
+                    }
+                    else{
+                        //子供たちを削除する親ノードにつなげる
+                        childNode[childKeys[j]].data.ParentNode.node = parentNode;
+                        //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
+                        parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+                        childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];                    
+                    }
                 }                
             }
-            //splice: 開始要素番号, 何個消せるか
-            this.nodes.splice(this.resDatas.id - 1, 1);
-            //htmlを削除
-            var element = document.getElementById("node_" + this.resDatas.id);
+            //該当の辞書要素を削除
+            delete this.nodes[i];
+            //htmlを削除 idは１からなので-1する必要あり
+            var element = document.getElementById("node_" + (i - 1));
             element.remove();
         }
     },
@@ -163,7 +182,7 @@ export default{
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
-            wrapper.setAttribute("id", "node_" + this.nodes.length);
+            wrapper.setAttribute("id", "node_" + Object.keys(this.nodes).length);
             //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
             //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
