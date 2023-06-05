@@ -78,9 +78,8 @@ export default{
         },
         isTaskEdit:function(){
             //ページのリロードするとデータが失われるので、その時はエラーする。
-            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
-            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
-            console.log(this.nodes[0].data);
+            this.nodes[this.resDatas.id].data.TaskNode.taskName = this.resDatas.title;
+            this.nodes[this.resDatas.id].data.TaskNode.deadline = this.resDatas.deadline;
         },
         isTaskDelete:function(){
             //削除命令が執行されたら
