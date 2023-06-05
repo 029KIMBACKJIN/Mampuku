@@ -92,6 +92,7 @@ export default{
             if(parentNode != null){
                 //親ノードが持つ子ノードのキーの配列
                 let parentChildKeys = Object.keys(parentNode.data.ChildNode.node);
+                console.log(parentChildKeys);
                 //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
                 for(var j = 0; j < parentChildKeys.length; j++){
                     //見つかったら削除
@@ -110,6 +111,7 @@ export default{
             //削除するノードに子ノードがいる場合
             if(Object.keys(childNode).length != 0){
                 let childKeys = Object.keys(childNode);
+                console.log("子ノード：" + childKeys);
                 //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
                 for(j = 0; j < childKeys.length; j++){
                     //もしルートノードを消したなら
@@ -121,6 +123,8 @@ export default{
                         childNode[childKeys[j]].data.TaskNode.line1 = null;
                     }
                     else{
+                        //親ノードに新しく子ノードを追加
+                        parentNode.data.ChildNode.node[childKeys[j]] = childNode[childKeys[j]];
                         //親ノードに親から子への線の情報を紐づける
                         parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
 
