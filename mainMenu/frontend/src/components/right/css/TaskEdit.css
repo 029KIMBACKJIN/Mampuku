@@ -1,25 +1,59 @@
 .TaskEdit{
     text-align: center;
     background-color: white;
-    height: 39vw;
     margin:2%;
+    position: relative;
 }
+.TaskEdit h1{
+    font-size: 300%;
+}
+
 p{
     font-size:larger;
     font-weight: 700;
 }
 
-.black-bg{
+/* .black-bg{
     width: auto;
     height: auto;
     background: rgba(0, 0, 0, 0.5);
-    position: relative;  /*fixed => relativeに変更*/
+    position: relative; 
     padding: 20px;
-}
+} */
 
-.white-bg{
+/* .white-bg{
     width: auto;
     background: white;
     border-radius: 30px;
     padding: 20px;
+} */
+
+.TaskEditHelpButton {
+    position: absolute;
+    top: 548px;
+    right: 1.5vw;
 }
+
+.TaskEditQuestionButton {
+    width: 3vw;
+    height: 3vw;
+    background-color: gray;
+    font-size: 200%;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+}
+
+.modal-container {
+    position: absolute;
+    top: 8vh; /* 버튼 아래로 위치 조정 */
+    left: 30vw;
+    width: 70vw;
+    text-align: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+  }

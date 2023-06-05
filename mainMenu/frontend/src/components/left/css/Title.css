@@ -1,7 +1,9 @@
 .Title{
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: white;    
     background-color:#932E44;
     margin: 2%;
-    height: 10vw;
+    height: 4vw;
 }

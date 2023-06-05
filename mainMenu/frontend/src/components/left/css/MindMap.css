@@ -1,5 +1,42 @@
 .MindMap{
+    position: relative;
+    text-align: center;
     background-color: white;
-    height: 80vw;
+    height: 80vh;
     margin:2%;
 }
+
+.MindMap h1{
+    font-size: 350%;
+}
+
+.MindMapHelpButton {
+    position: absolute;
+    top: 0.5vw;
+    right: 18vw;
+    z-index: 99;
+}
+
+.MindMapQuestionButton {
+    width: 3vw;
+    height: 3vw;
+    background-color: gray;
+    font-size: 200%;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+}
+
+.modal-container {
+    position: absolute;
+    top: 8vh; /* 버튼 아래로 위치 조정 */
+    left: 30vw;
+    width: 70vw;
+    text-align: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+  }

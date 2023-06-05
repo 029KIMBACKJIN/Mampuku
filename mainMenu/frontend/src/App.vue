@@ -6,9 +6,9 @@
       <div class = "Title">
         <TitleLogo/>
       </div>
-      <div class = "MenuBar">
+      <!-- <div class = "MenuBar">
         <MenuBar/>
-      </div>
+      </div> -->
       <div class = "MindMap">
         <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete"/>        
       </div>
@@ -19,9 +19,9 @@
         <AccountSet/>
         <!-- <router-view></router-view> -->
       </div>
-      <div class = "Calender">
+      <!-- <div class = "Calender">
         <CalenderDate/>
-      </div>  
+      </div>   -->
       <div class = "TaskAdd">
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
@@ -36,10 +36,10 @@
   //コンポーネントをimportする
   //import HelloWorld from './components/HelloWorld.vue'
   import TitleLogo from './components/left/vue/Title.vue'
-  import MenuBar from './components/left/vue/MenuBar.vue'
+  // import MenuBar from './components/left/vue/MenuBar.vue'
   import MindMap from './components/left/vue/MindMap.vue'
   import AccountSet from './components/right/vue/AccountSet.vue'
-  import CalenderDate from './components/right/vue/Calender.vue'
+  // import CalenderDate from './components/right/vue/Calender.vue'
   import TaskAdd from './components/right/vue/TaskAdd.vue'
   import TaskEdit from './components/right/vue/TaskEdit.vue'
 
@@ -56,10 +56,10 @@
     components: {
       //HelloWorld,
       TitleLogo,
-      MenuBar,
+      // MenuBar,
       MindMap,
       AccountSet,
-      CalenderDate,
+      // CalenderDate,
       TaskAdd,
       TaskEdit
     },

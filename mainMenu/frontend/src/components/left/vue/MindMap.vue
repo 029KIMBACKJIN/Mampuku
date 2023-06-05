@@ -1,10 +1,26 @@
 <template>
-    <div class = "MindMap">
+    <div class="MindMap">
+        <div class="MindMapHelpButton">
+            <button class="MindMapQuestionButton" @click="openModal">?</button>
+        </div>
+        <h1>マインドマップ</h1>
+        <div class="MindMapDrawArea">
+                <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas="sendToEditDatas" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete" />
+        </div>
+
+        <div class="modal-container" v-if="isModalOpen" @click="closeModal">
+            <div class="modal-content">
+                <p>{{ modalContent }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class = "MindMap">
         <h1>マインドマップ</h1>
         <div class = "MindMapDrawArea">
             <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas = "sendToEditDatas" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete"/>
         </div>
-    </div>
+    </div> -->
 </template>
 
 
@@ -20,12 +36,19 @@ export default{
         resDatas:Object
     },
     data:()=>({
-
+        isModalOpen: false,
+        modalContent: "登録したタスクが下の領域に表示されます。"
     }),
     components:{
         MindMapDraw
     },
     methods:{
+        openModal() {
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+        },
         sendToEditFlag:function(event){
             this.$emit("isEditFlag", event);
         },

@@ -18,8 +18,8 @@
 
   </template>
   <script>
-  import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-  import { onAuthStateChanged } from "firebase/auth";
+  import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+  // import { setPersistence, signInWithRedirect, inMemoryPersistence, GoogleAuthProvider } from "firebase/auth";
   
   export default {
     name: 'SignIn',
@@ -31,21 +31,8 @@
       };
     },
     computed: {
-      isLoggedIn() {
-        return this.$store.state.isLoggedIn; // Vuex Store의 로그인 상태를 가져옴
-      },
     },
     mounted() {
-        const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // ログイン状況
-            this.isLoggedIn = true;
-        } else {
-            // ログアウト状況
-            this.isLoggedIn = false;
-        }
-        });
     },
     methods: {
       checkAccount() {
@@ -67,6 +54,7 @@
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
 
+
             //追加。MindMapDrawで感知して向こうで削除する
             sessionStorage.setItem("login", true);
 
@@ -76,18 +64,7 @@
             const errorMessage = error.message;
             console.log(errorCode, errorMessage);
           });
-      },
-      logout(){
-        const auth = getAuth();
-        signOut(auth).then(() => {
-        // Sign-out successful.
-        sessionStorage.removeItem("currentUser");
-        this.userMail = "";
-        this.$store.dispatch('logout');
-        }).catch((error) => {
-        // An error happened.
-        console.log(error);
-        });
+          this.closeModal()
       },
       closeModal() {
         this.$emit('close-modal');
