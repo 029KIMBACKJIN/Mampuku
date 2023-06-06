@@ -39,7 +39,7 @@
             <br><br><p>
               終了フラグ <!-- (complelete) -->
             </p>
-            <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
+            <input v-model="inputComplete" type = "checkbox" id = "complete" name = "complete">
             <br><br>
             <p>
               親ノード <!-- (oarentNode) -->
@@ -79,7 +79,8 @@ export default{
         taskContent:"",
         deadline:null,
         complete:false,
-        select:"現在の親ノード"
+        parentId: -1,
+        select:-1
     }),
     computed:{
       //値の監視？
@@ -124,6 +125,7 @@ export default{
         //こうしないと日付が反映されない。
         this.inputDeadLine = (datas.deadline).split("T")[0];
         this.inputComplete = datas.complelte;
+        this.select = -1;
         this.initOption(datas.parentId);
 
         //タスク編集画面表示
@@ -137,9 +139,9 @@ export default{
           id: this.select
         }).then((res)=>{
           //親ノードを決定する
-          this.parentId = res.data.parentId;
-        }).catch((e)=>{
-          alert(e);
+          this.parentId = res.data.id;
+        }).catch(()=>{
+          //alert(e);
         });
       }
     },
@@ -177,8 +179,22 @@ export default{
         //送信ボタンを押したとき
         //データを送りたい場合はpost（express側も）と書いてリクエストする
         const user = getAuth().currentUser;
-        const uid = user.id;
+        const uid = user.uid;
         var datas = this.currentNodeDatas;
+
+        //エラー回避用
+        if(this.inputTaskName == this.currentNodeDatas.title && 
+        this.inputTaskContent == this.currentNodeDatas.contents && 
+        this.inputDeadLine == this.currentNodeDatas.deadline.split("T")[0] && 
+        this.inputComplete == this.currentNodeDatas.complelte && 
+        this.select == -1
+        ){
+          let ok = confirm("変更が無いようです。編集をやめますか？");
+          if(ok){
+            this.isTaskFormOpen = false;
+          }
+          return;
+        }
         axios.post("/TaskEdit/update", {
           //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
           id:datas.id,
@@ -186,7 +202,7 @@ export default{
           contents:this.inputTaskContent,
           deadline:this.inputDeadLine,
           complete:this.inputComplete,
-          parentId:datas.parentId,
+          parentId:this.parentId,
           childId:datas.childId,
           userId: uid
         }).then((res) =>{
@@ -224,6 +240,7 @@ export default{
         }).catch((e) =>{
           alert(e);
         })
+
       },
       deleteTask:function(){
         var ok = window.confirm("本当に削除しますか？");
