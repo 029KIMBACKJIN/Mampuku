@@ -1,6 +1,7 @@
 .TaskEdit{
     text-align: center;
     background-color: white;
+    height: 50vh;
     margin:2%;
     position: relative;
 }
@@ -8,30 +9,37 @@
     font-size: 300%;
 }
 
+form {
+    /* 폼 전체 크기 조정 */
+    width: 14vw;
+    display: inline;
+  }
+  
+  form input,
+  form select {
+    width: 100%;
+  }
+  
+  form p {
+    width: 100%;
+  }
+  
 p{
     font-size:larger;
     font-weight: 700;
 }
 
-/* .black-bg{
-    width: auto;
-    height: auto;
-    background: rgba(0, 0, 0, 0.5);
-    position: relative; 
-    padding: 20px;
-} */
-
-/* .white-bg{
-    width: auto;
-    background: white;
-    border-radius: 30px;
-    padding: 20px;
-} */
 
 .TaskEditHelpButton {
     position: absolute;
-    top: 548px;
-    right: 1.5vw;
+    top: 0.5vh;
+    right: 0.5vw;
+}
+
+.white-back{
+    background-color: white;
+    width: 20vw;
+    height: 20vw;
 }
 
 .TaskEditQuestionButton {
@@ -45,15 +53,15 @@ p{
     cursor: pointer;
 }
 
-.modal-container {
+.taskedit-modal-container {
     position: absolute;
-    top: 8vh; /* 버튼 아래로 위치 조정 */
-    left: 30vw;
-    width: 70vw;
+    top: 8vh;
+    right: 5vw;
+    width: 30vw;
     text-align: center;
   }
   
-  .modal-content {
+  .taskedit-modal-content {
     background-color: white;
     padding: 20px;
   }
