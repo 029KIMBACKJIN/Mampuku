@@ -57,7 +57,7 @@ export default{
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
         svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);  
-        
+
         //1秒間隔で処理を呼ぶ。
         this.findUserIntervalID = setInterval(this.findUser, 1000);
     }
@@ -92,6 +92,7 @@ export default{
             if(parentNode != null){
                 //親ノードが持つ子ノードのキーの配列
                 let parentChildKeys = Object.keys(parentNode.data.ChildNode.node);
+                console.log(parentChildKeys);
                 //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
                 for(var j = 0; j < parentChildKeys.length; j++){
                     //見つかったら削除
@@ -101,14 +102,16 @@ export default{
                         delete parentNode.data.ChildNode.node[parentChildKeys[j]];
                         //削除対象につながっているline2も同様に削除
                         delete parentNode.data.TaskNode.line2[parentChildKeys[j]];
+
+                        //削除は１つだけなのでループを出る
+                        break;
                     }                    
                 }
             }
             //削除するノードに子ノードがいる場合
-            if(childNode != {}){
-                //親ノードが持つ子ノードのキー(こっちは配列ではない)
-                //let ParentKey = parentNode.data.TaskNode.id;
+            if(Object.keys(childNode).length != 0){
                 let childKeys = Object.keys(childNode);
+                console.log("子ノード：" + childKeys);
                 //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
                 for(j = 0; j < childKeys.length; j++){
                     //もしルートノードを消したなら
@@ -120,17 +123,23 @@ export default{
                         childNode[childKeys[j]].data.TaskNode.line1 = null;
                     }
                     else{
-                        //子供たちを削除する親ノードにつなげる
+                        //親ノードに新しく子ノードを追加
+                        parentNode.data.ChildNode.node[childKeys[j]] = childNode[childKeys[j]];
+                        //親ノードに親から子への線の情報を紐づける
+                        parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+
+                        //子供たちを、削除するノードの親ノードにつなげる
                         childNode[childKeys[j]].data.ParentNode.node = parentNode;
                         //childNodeのParentNodeの座標の参照先をparentNodeにしておく処理を追記
 
                         //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
-                        childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+                        //childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
                         childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];
                     }
                 }                
             }
             //該当の辞書要素を削除
+            clearInterval(this.nodes[i].data.TaskNode.intervalId);
             delete this.nodes[i];
             //ノードと線のhtmlを削除
             let element = document.getElementById("node_" + i);
@@ -247,28 +256,6 @@ export default{
                 }
             }
             document.getElementById("canvas").appendChild(line1);
-            /*
-            if(Component._instance.data.ParentNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            if(Component._instance.data.ChildNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            */
-           /*
-            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line2.setAttribute("id", "line2");
-            line2.setAttribute("x1", Component._instance.data.TaskNode.x);
-            line2.setAttribute("y1", Component._instance.data.TaskNode.y);
-            line2.setAttribute("x2", Component._instance.data.ChildNode.x);
-            line2.setAttribute("y2", Component._instance.data.ChildNode.y);
-            line2.setAttribute('stroke', '#008080');
-            line2.setAttribute('stroke-width', 5);
-
-            Component._instance.data.TaskNode.line2 = line2;
-            if(Component._instance.data.ChildNode.node != null){
-                Component._instance.data.ChildNode.node.TaskNode.line1 = line2;
-            }
-            document.getElementById("canvas").appendChild(line2);
-            */
 
             var keys = Object.keys(this.nodes);
             for(var i = 0; i < keys.length; i++){

@@ -10,7 +10,7 @@
         line-height: 80px;
         "
         v-bind:style="{
-            transform: `translate(${TaskNode.x - 450}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            transform: `translate(${TaskNode.x + moveDelta - TaskNode.drawWidth}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
             backgroundColor: TaskNode.color
         }"  
         v-on:dblclick="mouseDoubleClick"
@@ -32,6 +32,8 @@ export default{
     props: {
     },
     data: () => ({
+        windowWidth:window.innerWidth, //ウィンドウサイズについて。初期値は現在のwindowサイズ。innerHeightは必要になったら追加する
+        moveDelta:0,    
         ParentNode:{
             node:null,
             x:0,
@@ -45,7 +47,7 @@ export default{
             maxScY:4,
             x:100,
             y:600,
-            drawWidth:100,
+            drawWidth:300,
             drawHeight:100,
             color:"#FFFFFF",
             taskName:"タスク名",        
@@ -68,9 +70,13 @@ export default{
     mounted(){
         //1秒単位で現在時刻を更新する。
         this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
+        window.addEventListener("resize", this.windowResize);
+    },
+    //終了直前に呼ばれるメソッド？
+    beforeUnmount(){
+        window.removeEventListener("resize", this.windowResize);
     },
     watch:{
-
     },
     methods:{
         mouseDoubleClick: function(){
@@ -95,6 +101,15 @@ export default{
         mouseLeave:function(){
             this.TaskNode.clicking = false;
             //this.TaskNode.taskName = "離した";
+        },
+        windowResize:function(){
+            /*
+            //前よりもウィンドウサイズが大きくなったら正の値、逆なら負の値になる。
+            this.moveDelta = (this.windowWidth - window.innerWidth)*10;                
+            this.TaskNode.drawWidth = 100 * window.innerWidth / this.windowWidth;
+            this.windowWidth = window.innerWidth;
+            console.log("ウィンドウサイズが変更された:" + this.moveDelta);
+            */
         },
         setPos:function(){
             if(this.ParentNode.node != null){
@@ -168,6 +183,9 @@ export default{
                         console.log("line1[" + childKeys[i] + "]を設定中");
                     }
                 }
+            }
+            else{
+                console.log("line2がない");
             }
             /*
             console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
