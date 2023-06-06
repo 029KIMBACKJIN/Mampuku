@@ -12,4 +12,14 @@ router.post("/delete", function(req, res){
     dbController.delete(req, res);
 });
 
+router.post("/all", function(req, res){
+    console.log(req.params, req.body);
+    //dbController.findAllData(req, res);
+    dbController.findWithIdAll(req,res);
+});
+
+router.post("/findParent", function(req, res){
+    dbController.findOne(req, res);
+});
+
 module.exports = router;

@@ -210,7 +210,6 @@ export default{
             //データベースに登録されているタスクのid, 名前を代入する。
             Component._instance.data.TaskNode.id = data.id;
             Component._instance.data.TaskNode.taskName = data.title;
-            Component._instance.data.TaskNode.drawWidth = 200;
             Component._instance.data.TaskNode.drawHeight = this.height;
             Component._instance.data.TaskNode.deadline = data.deadline;
 
@@ -257,28 +256,6 @@ export default{
                 }
             }
             document.getElementById("canvas").appendChild(line1);
-            /*
-            if(Component._instance.data.ParentNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            if(Component._instance.data.ChildNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            */
-           /*
-            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line2.setAttribute("id", "line2");
-            line2.setAttribute("x1", Component._instance.data.TaskNode.x);
-            line2.setAttribute("y1", Component._instance.data.TaskNode.y);
-            line2.setAttribute("x2", Component._instance.data.ChildNode.x);
-            line2.setAttribute("y2", Component._instance.data.ChildNode.y);
-            line2.setAttribute('stroke', '#008080');
-            line2.setAttribute('stroke-width', 5);
-
-            Component._instance.data.TaskNode.line2 = line2;
-            if(Component._instance.data.ChildNode.node != null){
-                Component._instance.data.ChildNode.node.TaskNode.line1 = line2;
-            }
-            document.getElementById("canvas").appendChild(line2);
-            */
 
             var keys = Object.keys(this.nodes);
             for(var i = 0; i < keys.length; i++){

@@ -40,6 +40,15 @@
               終了フラグ <!-- (complelete) -->
             </p>
             <input v-model="inputComplete" type = "checkbox" id = "complelete" name = "complelete">
+            <br><br>
+            <p>
+              親ノード <!-- (oarentNode) -->
+            </p>
+            <select v-model="select" name="nodes" id="TaskNodesEdit" v-on:mousedown="selectNodes">
+              <option id = "nowParent" value="">親ノード</option>
+            </select>
+            <br><br>
+
           </form>
           <button v-on:click="createTask">タスク登録 <!-- (Edit Task) --></button>
           <button v-on:click="deleteTask" style="color: red;">タスク削除 <!-- (Delete Task) --></button>
@@ -69,7 +78,8 @@ export default{
         taskName:"",
         taskContent:"",
         deadline:null,
-        complete:false
+        complete:false,
+        select:"現在の親ノード"
     }),
     computed:{
       //値の監視？
@@ -114,13 +124,51 @@ export default{
         //こうしないと日付が反映されない。
         this.inputDeadLine = (datas.deadline).split("T")[0];
         this.inputComplete = datas.complelte;
+        this.initOption(datas.parentId);
 
         //タスク編集画面表示
         this.isTaskFormOpen = true;
         
+      },
+      select:function(){
+        //ドロップダウンメニューが選択されたら呼ばれる。valueが取れる
+        console.log(this.select);
+        axios.post("/TaskEdit/findParent",{
+          id: this.select
+        }).then((res)=>{
+          //親ノードを決定する
+          this.parentId = res.data.parentId;
+        }).catch((e)=>{
+          alert(e);
+        });
       }
     },
     methods: {
+      init: function(){
+        //入力内容をクリアする
+        this.taskName = "";
+        this.taskContent = "";
+        this.deadline = null;
+        this.complete = false;
+      },
+      initOption: function(parentId){
+        //選択肢の初期状態
+        axios.post("/TaskEdit/findParent", {
+          id: parentId
+        }).then((res)=>{
+          let doc = document.getElementById("nowParent");
+          if(doc != null){
+            doc.textContent = res.data.title + "(現在の親ノード)";
+          }
+          }).catch(()=>{
+          //alert(e);
+          let doc = document.getElementById("nowParent");
+          if(doc != null){
+            doc.textContent = "親ノードなし";
+            doc.value = "";
+          }
+        })
+      },
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
         else this.isTaskFormOpen = true;
@@ -161,6 +209,7 @@ export default{
             childId: res.data.childId
           }
           this.isTaskEditSwitch = !this.isTaskEditSwitch;
+          this.inputTaskName = "";
           this.$emit("editFlag", this.isTaskEditSwitch);
           this.$emit("resEditDatas", this.resDatas);
 
@@ -169,6 +218,7 @@ export default{
           this.taskContent = "";
           this.deadline = null;
           this.complete = false;
+          this.clearOptions();
 
           this.isTaskFormOpen = false;
         }).catch((e) =>{
@@ -218,11 +268,7 @@ export default{
             this.$emit("deleteFlag", this.isTaskEditSwitch);
             this.$emit("resDeleteData", this.resData);
 
-            //入力内容をクリアする
-            this.taskName = "";
-            this.taskContent = "";
-            this.deadline = null;
-            this.complete = false;
+            this.init();
 
             this.isTaskFormOpen = false;
           }).catch((e) =>{
@@ -237,6 +283,33 @@ export default{
         } else {
           this.toggle();
         }
+      },
+      selectNodes:function(){
+        let element = this.clearOptions();
+        const user = getAuth().currentUser;
+        //データベースから、登録されているタスク一覧を表示させる
+        axios.post("/TaskEdit/all", {
+          uid: user.uid
+        }).then((res)=>{          
+          for(var i = 0; i < res.data.length; i++){
+            var option = document.createElement("option");          
+            //option.setAttribute("id",res.data[i].id);
+            option.setAttribute("value", res.data[i].id);
+            option.text = res.data[i].title;
+            element.appendChild(option);
+          }
+        }).catch((e)=>{
+          alert(e.message);
+        })
+
+      },
+      clearOptions:function(){
+        let element = document.getElementById("TaskNodesEdit");
+        //オプションをクリアする(最初以外)
+        while(element.children.length > 1){
+          element.removeChild(element.lastChild);
+        }
+        return element;
       },
       mouseDoubleClick: function(event){
         //MindMapNodeのbuttonタグのidが取得できる。これをテーブルのidにしてしまえば、ここからaxios.get()で編集した内容を送ればいける？
