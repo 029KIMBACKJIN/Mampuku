@@ -85,6 +85,8 @@ export default{
             //ページのリロードするとデータが失われるので、その時はエラーする。
             currentNode.data.TaskNode.taskName = this.resDatas.title;
             currentNode.data.TaskNode.deadline = this.resDatas.deadline;
+            currentNode.data.TaskNode.resetIntervalSwi = !currentNode.data.TaskNode.resetIntervalSwi;
+            console.log(currentNode.data.TaskNode.resetIntervalSwi);
             //編集したノードの親ノードに登録されている編集したノード情報を一度削除
             if(currentNode.data.ParentNode.node != null){
                 delete currentNode.data.ParentNode.node.data.ChildNode.node[this.resDatas.id];
@@ -99,7 +101,6 @@ export default{
         findUser:function(){
             //ログインするまで定期的に呼ばれ続けるメソッド
             const b = sessionStorage.getItem("login");
-            console.log(b);
             if(b != null){
                 const user = getAuth().currentUser;
                 console.log("ログインしました");
@@ -120,7 +121,7 @@ export default{
             }
         },
         mouseDoubleClick: function(event){
-            console.log("ダブルクリックした。データ：" + event.target.id);
+            //console.log("ダブルクリックした。データ：" + event.target.id);
             //MindMapNodeから以下をやろうとすると、TaskEditへデータを送れない。
             if(event.target.id != "canvas"){
                 axios.post("/MindMap/doubleClick", {
@@ -186,12 +187,14 @@ export default{
 
             document.getElementById("canvas").appendChild(line1);
 
+            /*
             var keys = Object.keys(this.nodes);
             for(var i = 0; i < keys.length; i++){
-                console.log("key = " + keys[i]);
+                //console.log("key = " + keys[i]);
                 var d = this.nodes[keys[i]];
-                console.log("登録されているノード:" + d.data);
+                //console.log("登録されているノード:" + d.data);
             }
+            */
             //MindMapDrawというidを持つ要素の中に入れる
 
 
@@ -231,7 +234,7 @@ export default{
                 for(var j = 0; j < parentChildKeys.length; j++){
                     //見つかったら削除
                     if(parentNode.data.ChildNode.node[parentChildKeys[j]].data.TaskNode.id == this.resDatas.id){
-                        console.log("見つかった！ノードキー：" + parentChildKeys[j]);
+                        //console.log("見つかった！ノードキー：" + parentChildKeys[j]);
                         //親ノードに登録されている子ノードを削除。
                         delete parentNode.data.ChildNode.node[parentChildKeys[j]];
                         //削除対象につながっているline2も同様に削除
@@ -248,7 +251,7 @@ export default{
             //削除するノードに子ノードがいる場合
             if(Object.keys(childNode).length != 0){
                 let childKeys = Object.keys(childNode);
-                console.log("子ノード：" + childKeys);
+                //console.log("子ノード：" + childKeys);
                 //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
                 for(let j = 0; j < childKeys.length; j++){
                     //もしルートノードを消したなら

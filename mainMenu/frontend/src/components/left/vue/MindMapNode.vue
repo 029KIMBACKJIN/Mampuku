@@ -32,9 +32,6 @@ export default{
     props: {
     },
     data: () => ({
-        windowWidth:window.outerWidth,
-        beforeOffsetX:0,
-        beforeOffsetY:0,
         ParentNode:{
             node:null,
             x:0,
@@ -46,9 +43,9 @@ export default{
             scY:2,
             maxScX:4,
             maxScY:4,
-            x:100,
-            y:600,
-            drawWidth:600,
+            x:200,
+            y:300,
+            drawWidth:5000,
             drawHeight:100,
             color:"#FFFFFF",
             taskName:"タスク名",        
@@ -57,6 +54,7 @@ export default{
             line2:{},    //子ノードへの線
             currentDate:null,  //現在時刻
             intervalId:null,
+            resetIntervalSwi:false,   //計算やり直し開始フラグ
             deadline:null   //締め切り日
 
         },
@@ -71,45 +69,20 @@ export default{
     mounted(){
         //1秒単位で現在時刻を更新する。
         this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
-        window.addEventListener("resize", this.resizeWindow);
-        this.beforeOffsetX = this.TaskNode.x;
-        this.beforeOffsetY = this.TaskNode.y;
     },
     //終了直前に呼ばれるメソッド？
     beforeUnmount(){
     },
     watch:{
+        resetIntervalSwi:function(){
+            this.TaskNode.scX = 2;
+            this.TaskNode.scY = 2;
+            this.TaskNode.color = "#FFFFFF";
+            clearInterval(this.TaskNode.intervalId);
+            this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
+        }
     },
     methods:{
-        resizeWindow:function(){
-            var element = document.getElementById(this.TaskNode.id);
-            console.log("window:" + this.windowWidth, window.innerWidth, window.outerWidth);
-            console.log("rect:" + element.clientLeft, element.clientTop);
-            /*
-            if(this.TaskNode.line1 != null){
-                this.TaskNode.line1.setAttribute("x2", element.clientLeft);
-            }
-            for(let i = 0; i < Object.keys(this.TaskNode.line2).length; i++){
-                //
-            }
-            */
-            //let x = this.TaskNode.x;
-            //let y = this.TaskNode.y;
-            //this.TaskNode.x = element.offsetLeft + (this.windowWidth - window.outerWidth);
-            //this.TaskNode.x = element.clientLeft;
-            //this.TaskNode.x = x;
-            //this.TaskNode.y = y;
-            /*
-            if(this.TaskNode.x != this.beforeTaskX){
-                this.TaskNode.x = this.beforeTaskX;
-            }
-            if(this.TaskNode.y != this.beforeTaskY){
-                this.TaskNode.y = this.beforeTaskY;
-            }
-            */
-            console.log("Node:" + this.TaskNode.taskName + ", " + this.TaskNode.x, this.TaskNode.y);
-            console.log(element.offsetLeft, element.offsetTop);
-        },
         mouseDoubleClick: function(){
         },
         mouseClickUp:function(){
@@ -126,10 +99,6 @@ export default{
                 //マウスの移動量で計算
                 this.TaskNode.x += e.movementX;
                 this.TaskNode.y += e.movementY;
-                var element = document.getElementById(this.TaskNode.id);
-                this.beforeOffsetX = this.TaskNode.x;
-                this.beforeOffsetY = this.TaskNode.y;
-                console.log(this.TaskNode.x, element.offsetLeft, this.TaskNode.y, element.offsetTop);
                 this.setPos();
             }
         },
@@ -230,29 +199,34 @@ export default{
                     r = parseInt(r, 16);  //16進数文字列を10進数に変換
                     g = parseInt(g, 16);  //16進数文字列を10進数に変換
                     b = parseInt(b, 16);  //16進数文字列を10進数に変換
-                    g -= parseInt(g / days);
-                    b -= parseInt(b / days);
-                    if(r < 10){
-                        r = "0" + r.toString(16);  //16進数文字列を10進数に変換
+                    
+                    //0～15は16進数にすると1桁になるから
+                    if(r - parseInt(r / days) < 16){
+                        //r -= parseInt(r / days);
+                        r = "0" + r.toString(16);  //10進数を16進数文字列に変換
                     }
                     else{
-                        r = r.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    if(g < 10){
-                        g = "0" + g.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    else{
-                        g = g.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    if(b < 10){
-                        b = "0" + b.toString(16);  //16進数文字列を10進数に変換
+                        //r -= parseInt(r / days);
+                        r = r.toString(16);  //10進数を16進数文字列に変換
+                    }                    
+                    if(g - parseInt(g / days) < 16){
+                        g -= parseInt(g / days);
+                        g = "0" + g.toString(16);  //10進数を16進数文字列に変換
                     }
                     else{
-                        b = b.toString(16);  //16進数文字列を10進数に変換
+                        g -= parseInt(g / days);
+                        g = g.toString(16);  //10進数を16進数文字列に変換
+                    }
+                    if(b - parseInt(b / days) < 16){
+                        b = "0" + b.toString(16);  //10進数を16進数文字列に変換
+                    }
+                    else{
+                        b -= parseInt(b / days);
+                        b = b.toString(16);  //10進数を16進数文字列に変換
                     }
                     this.TaskNode.color = rgb[0] + r + g + b;
                 }
-
+                console.log(this.TaskNode.color);
                 this.setPos();
                 //期限を過ぎたら
                 if(days <= 0){

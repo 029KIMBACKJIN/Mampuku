@@ -9,7 +9,7 @@
       <!-- <div class = "MenuBar">
         <MenuBar/>
       </div> -->
-      <div class = "MindMap">
+      <div class = "MindMapFlame">
         <MindMap :isTaskCreated="isTaskCreated" :resDatas="resDatas"  v-on:isEditFlag="sendFlagToEdit" v-on:resEditDatas="sendDatasToEdit" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete"/>        
       </div>
     </div>

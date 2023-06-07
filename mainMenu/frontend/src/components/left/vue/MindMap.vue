@@ -15,12 +15,6 @@
         </div>
     </div>
 
-    <!-- <div class = "MindMap">
-        <h1>マインドマップ</h1>
-        <div class = "MindMapDrawArea">
-            <MindMapDraw :isTaskCreated="isTaskCreated" :resDatas="resDatas" v-on:isEditFlag="sendToEditFlag" v-on:resEditDatas = "sendToEditDatas" :isTaskEdit="isTaskEdit" :isTaskDelete="isTaskDelete"/>
-        </div>
-    </div> -->
 </template>
 
 

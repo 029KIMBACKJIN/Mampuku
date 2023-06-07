@@ -1,6 +1,7 @@
 #MindMapDraw{
     background-color: aqua;
-    height: 130vh;
-    overflow-x: scroll;   /*横のスクロールバーを表示する*/
+    width: 10000px;
+    height: 132vh;
+    overflow-x: hidden;   /*横のスクロールバーを表示する*/
     overflow-y: scroll;   /*縦のスクロールバーを表示する*/
 }
