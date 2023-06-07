@@ -63,6 +63,7 @@
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage);
+            alert("サインインできません！\n入力情報収集を確認してください。");
           });
           this.closeModal()
       },
