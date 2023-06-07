@@ -38,7 +38,6 @@
       };
     },
     created() {
-      console.log("캘린더 재생성");
       this.generateCalendarWithUID();
     },
     methods: {
