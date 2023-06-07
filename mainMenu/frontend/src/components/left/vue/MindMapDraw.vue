@@ -35,13 +35,13 @@ export default{
         isTaskEdit:Boolean,
         isTaskDelete:Boolean,
         resDatas:Object,
-        width:{type:Number,default:10000},
-        height:{type:Number,default:10000}
     },
     data: () => ({
         isCreateNode:false,
         isEditNode:false,
         findUserIntervalID:null,
+        width:10000,
+        height:10000,
         nodes:{}
     }),
     components: {
@@ -51,10 +51,14 @@ export default{
         console.log("ページが読み込まれました");
         //svgタグを定義
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        //let e = document.getElementById("MindMapDraw");
+        //ウィンドウサイズに合わせる
+        //this.width = e.clientWidth + window.innerWidth;    
+        //this.height = e.clientHeight + window.innerHeight;
         svg.setAttribute("id", "canvas");
         svg.setAttribute("width", this.width);
         svg.setAttribute("height", this.height);
-        svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
+        svg.setAttribute("viewbox", (-this.width +  " 0 " + this.width + " " + this.height));
         svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);  
 
