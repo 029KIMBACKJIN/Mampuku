@@ -27,7 +27,7 @@ html{
     display: inline-block;
     float: right; /*要素を右寄せにする */
     width: 24.8%;
-    height: 87vh;
+    height: wrap;
     margin: 0.1%;
 }
 

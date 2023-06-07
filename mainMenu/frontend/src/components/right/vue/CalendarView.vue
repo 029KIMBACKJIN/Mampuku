@@ -13,7 +13,7 @@
         </thead>
         <tbody>
           <tr v-for="week in weeks" :key="week">
-            <td v-for="day in week" :key="day.date" :class="{ today: isToday(day), selected: isSelected(day) }" @click="selectDate(day)">
+            <td v-for="day in week" :key="day.date" :class="{ today: isToday(day) }" @click="selectDate(day)">
               {{ day.date }}
             </td>
           </tr>
@@ -23,6 +23,9 @@
   </template>
   
   <script>
+  import { getAuth } from 'firebase/auth';
+  import axios from 'axios';
+
   export default {
     data() {
       return {
@@ -30,13 +33,13 @@
         currentDate: null,
         selectedDate: null,
         daysOfWeek: ['日', '月', '火', '水', '木', '金', '土'],
-        weeks: []
+        weeks: [],
+        deadlines: []
       };
     },
     created() {
-      this.currentDate = new Date();
-      this.currentMonth = this.getMonthYearString(this.currentDate);
-      this.generateCalendar();
+      console.log("캘린더 재생성");
+      this.generateCalendarWithUID();
     },
     methods: {
       previousMonth() {
@@ -77,9 +80,6 @@
               year: currentDate.getFullYear()
             });
           }
-          
-
-  
           if (currentDate.getDay() === 6) {
             weeks.push(week);
             week = [];
@@ -105,6 +105,31 @@
         const month = date.toLocaleString('default', { month: 'long' });
         const year = date.getFullYear();
         return `${year}年 ${month}`;
+      },
+      generateCalendarWithUID() {
+        const user = getAuth().currentUser;
+        if (user) {
+          console.log("사인인중");
+          const uid = user.uid;
+          axios.post("/MindMap/all", {
+            userId: uid
+          }).then((res) =>{
+            console.log(res.data);
+            for(let key in res.data) {
+              console.log(res.data[key]);
+              if(key == "deadline"){
+                console.log(res.data[key]);
+              }
+            }
+          }).catch((e) =>{
+            alert(e);
+          })
+        } else {
+          console.log("사인아웃상태");
+          this.currentDate = new Date();
+          this.currentMonth = this.getMonthYearString(this.currentDate);
+          this.generateCalendar();
+        }
       }
     }
   };
