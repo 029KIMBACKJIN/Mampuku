@@ -3,7 +3,7 @@ const dbController = require('../database/controllers');
 const router = express.Router();
 
 router.post("/update", function(req, res){
-    console.log(req.body.id);
+    console.log(req.body);
     dbController.update(req, res);
 });
 
