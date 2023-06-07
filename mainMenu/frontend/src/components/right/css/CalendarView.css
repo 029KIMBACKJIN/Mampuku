@@ -1,0 +1,41 @@
+
+.calendar {
+    width: 23.5vw;
+    margin: 0 auto;
+    background-color: white;
+    text-align: center;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 300%;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th {
+    text-align: center;
+    padding: 5px;
+    font-size: 150%;
+  }
+
+  td {
+    text-align: center;
+    padding: 5px;
+    font-size: 150%;
+  }
+  
+  .today {
+    font-weight: bold;
+    background-color: rgb(228, 228, 228);
+  }
+  
+  .selected {
+    background-color: lightblue;
+  }

@@ -19,9 +19,9 @@
         <AccountSet/>
         <!-- <router-view></router-view> -->
       </div>
-      <!-- <div class = "Calender">
+      <div class = "Calender">
         <CalenderDate/>
-      </div>   -->
+      </div>  
       <div class = "TaskAdd">
         <TaskAdd v-on:createdFlag ="sendToMindMapDraw" v-on:resDatas="sendToMindMapDraw2"/>        
       </div>
@@ -39,7 +39,7 @@
   // import MenuBar from './components/left/vue/MenuBar.vue'
   import MindMap from './components/left/vue/MindMap.vue'
   import AccountSet from './components/right/vue/AccountSet.vue'
-  // import CalenderDate from './components/right/vue/Calender.vue'
+  import CalenderDate from './components/right/vue/CalendarView.vue'
   import TaskAdd from './components/right/vue/TaskAdd.vue'
   import TaskEdit from './components/right/vue/TaskEdit.vue'
 
@@ -59,7 +59,7 @@
       // MenuBar,
       MindMap,
       AccountSet,
-      // CalenderDate,
+      CalenderDate,
       TaskAdd,
       TaskEdit
     },
