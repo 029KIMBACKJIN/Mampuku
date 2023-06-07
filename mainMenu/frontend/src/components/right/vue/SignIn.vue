@@ -57,12 +57,12 @@
 
             //追加。MindMapDrawで感知して向こうで削除する
             sessionStorage.setItem("login", true);
-
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage);
+            alert("サインインできません！\n入力情報収集を確認してください。");
           });
           this.closeModal()
       },
@@ -74,4 +74,3 @@
   </script> 
 
 <style src="../css/SingIn.css"></style>
-  

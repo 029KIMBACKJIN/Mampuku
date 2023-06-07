@@ -2,7 +2,7 @@
   <div class = "TaskEdit">
       <h1>タスク編集</h1>
       <div class="TaskEditHelpButton">
-            <!-- <button class="TaskEditQuestionButton">?</button> -->
+        <button class="TaskEditQuestionButton" @click="openModal">?</button>
       </div>
       <div class = "black-bg" v-if = "isTaskFormOpen == true">
         <div class = "white-bg">
@@ -54,6 +54,11 @@
           <button v-on:click="deleteTask" style="color: red;">タスク削除 <!-- (Delete Task) --></button>
         </div>
       </div>
+      <div class="taskedit-modal-container" v-if="isModalOpen" @click="closeModal">
+          <div class="taskedit-modal-content">
+            <p>{{ modalContent }}</p>
+          </div>
+        </div>
   </div>
 
 </template>
@@ -79,8 +84,13 @@ export default{
         taskContent:"",
         deadline:null,
         complete:false,
+
+        isModalOpen: false,
+        modalContent: "左側のマップに表示されているタスクをダブルクリックすれば編集ができるようになります。",
+
         parentId: -1,
         select:-1
+
     }),
     computed:{
       //値の監視？
@@ -146,6 +156,14 @@ export default{
       }
     },
     methods: {
+
+      openModal() {
+        this.isModalOpen = true;
+      },
+      closeModal() {
+        this.isModalOpen = false;
+      },
+
       init: function(){
         //入力内容をクリアする
         this.taskName = "";
@@ -170,6 +188,7 @@ export default{
             doc.value = "";
           }
         })
+
       },
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
