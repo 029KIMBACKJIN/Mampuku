@@ -19,6 +19,7 @@ html{
     display: inline-block;
     float: left;   /*要素を左寄せにする */
     width: 74.8%;
+    height:155vh;
     margin: 0.1%;
 }
 
@@ -27,7 +28,9 @@ html{
     display: inline-block;
     float: right; /*要素を右寄せにする */
     width: 24.8%;
+
     height: wrap;
+
     margin: 0.1%;
 }
 

@@ -14,6 +14,7 @@ exports.create = (req, res) => {
       return;
     }
     const task = temp.taskTemp(req);
+
     console.log("登録情報：" + task.toString());
     // Save Tutorial in the database
     tasks.create(task)

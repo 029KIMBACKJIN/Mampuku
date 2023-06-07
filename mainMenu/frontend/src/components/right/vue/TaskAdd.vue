@@ -45,7 +45,7 @@
                 親ノード <!-- (oarentNode) -->
               </p>
               <select v-model="select" name="nodes" id="TaskNodes" v-on:mousedown="selectNodes">
-                <option value="">親ノード選択</option>
+                <option name = "" value="">なし</option>
               </select>
               <br><br>
             </form>
@@ -144,6 +144,13 @@ export default{
       closeModal() {
         this.isModalOpen = false;
       },
+      init:function(){
+        this.inputTaskName = "";
+        this.inputTaskContent = "";
+        this.inputDeadLine = null;
+        this.inputComplete = false;
+        this.clearOptions();
+      },
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
         else this.isTaskFormOpen = true;
@@ -151,6 +158,10 @@ export default{
       createTask: function() {
         const user = getAuth().currentUser;
         if (user) {
+          if(this.inputTaskName == "" || this.inputDeadLine == null){
+            this.errorAlert();
+            return ;
+          }
           // ログインした人のUID
           const uid = user.uid;
           //送信ボタンを押したとき
@@ -185,6 +196,7 @@ export default{
               userId: res.data.userId
             },
             this.isTaskCreatedSwitch = !this.isTaskCreatedSwitch;
+            this.init();
             this.$emit("createdFlag", this.isTaskCreatedSwitch);
             this.$emit("resDatas", this.resDatas);
 
@@ -197,6 +209,16 @@ export default{
         }
         
       },
+      errorAlert:function(){
+        let nameError = this.inputTaskName == "" ? "タスク名\n":"";
+        let dateError = this.inputDeadLine == null ? "締め切り日":"";
+        alert(
+          "未入力の項目があります！\n" + 
+          nameError + 
+          dateError
+        );
+
+      },
       clickCreateTask : function() {
         if(this.isTaskFormOpen == true) {
           this.createTask();
@@ -206,11 +228,7 @@ export default{
         }
       },
       selectNodes:function(){
-        var element = document.getElementById("TaskNodes");
-        //オプションをクリアする(最初以外)
-        while(element.children.length > 1){
-          element.removeChild(element.lastChild);
-        }
+        let element = this.clearOptions();
         const user = getAuth().currentUser;
         //データベースから、登録されているタスク一覧を表示させる
         axios.post("/TaskAdd/all", {
@@ -227,6 +245,14 @@ export default{
           alert(e.message);
         })
 
+      },
+      clearOptions:function(){
+        let element = document.getElementById("TaskNodes");
+        //オプションをクリアする(最初以外)
+        while(element.children.length > 1){
+          element.removeChild(element.lastChild);
+        }
+        return element;
       },
       // DB操作確認のため仮で作ったFuntion
       // Create Task ボタンを押したらTitleに入力した数字にてDBで検索

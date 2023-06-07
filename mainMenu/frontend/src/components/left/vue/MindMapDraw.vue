@@ -57,7 +57,7 @@ export default{
         svg.setAttribute("viewbox", ("0 0 " + "1000" + " " + "1000"));
         svg.setAttribute("style", "background-color:aqua");
         document.getElementById("MindMapDraw").appendChild(svg);  
-        
+
         //1秒間隔で処理を呼ぶ。
         this.findUserIntervalID = setInterval(this.findUser, 1000);
     }
@@ -77,41 +77,18 @@ export default{
             this.createNode(this.resDatas);
         },
         isTaskEdit:function(){
+            let currentNode = this.nodes[this.resDatas.id];
             //ページのリロードするとデータが失われるので、その時はエラーする。
-            this.nodes[this.resDatas.id - 1].data.TaskNode.taskName = this.resDatas.title;
-            this.nodes[this.resDatas.id - 1].data.TaskNode.deadline = this.resDatas.deadline;
-            console.log(this.nodes[0].data);
+            currentNode.data.TaskNode.taskName = this.resDatas.title;
+            currentNode.data.TaskNode.deadline = this.resDatas.deadline;
+            //編集したノードの親ノードに登録されている編集したノード情報を一度削除
+            if(currentNode.data.ParentNode.node != null){
+                delete currentNode.data.ParentNode.node.data.ChildNode.node[this.resDatas.id];
+            }
+            this.changeParent(this.resDatas.id, this.resDatas.parentId, this.nodes[this.resDatas.id]);
         },
         isTaskDelete:function(){
-            //削除命令が執行されたら
-            var i = this.resDatas.id - 1;
-            var node = this.nodes[i].data;
-            var parentNode = node.ParentNode.node;
-            var childNode = node.ChildNode.node;
-            if(parentNode != null){
-                //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
-                for(var j = 0; j < parentNode.data.ChildNode.node.length; j++){
-                    //見つかったら削除
-                    if(parentNode.data.ChildNode.node[j].data.TaskNode.id == this.resDatas.id){
-                        console.log("見つかった！");
-                        parentNode.data.ChildNode.node.splice(j, 1);
-                    }                    
-                }
-            }
-            if(childNode.length != 0){
-                //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
-                for(j = 0; j < childNode.length; j++){
-                    //子供たちを削除する親ノードにつなげる
-                    childNode[j].data.ParentNode.node = parentNode;
-                    //線も同様に
-                    childNode[j].data.TaskNode.line1 = parentNode.data.TaskNode.line2[0];                    
-                }                
-            }
-            //splice: 開始要素番号, 何個消せるか
-            this.nodes.splice(this.resDatas.id - 1, 1);
-            //htmlを削除
-            var element = document.getElementById("node_" + this.resDatas.id);
-            element.remove();
+            this.deleteNode();
         }
     },
     methods:{
@@ -151,8 +128,9 @@ export default{
                     this.$emit("isEditFlag", this.isEditNode);
                     this.$emit("resEditDatas", res.data);
                 })
-                .catch((e)=>{
-                    alert(e);
+                .catch(()=>{
+                    alert("このノードは存在しません。削除に失敗している可能性があります。\nもう一度削除を実行します。");
+                    this.deleteNode();
                 })
             }
         },
@@ -163,7 +141,7 @@ export default{
             const Component = createApp(MindMapNode);
             //divというタグの要素を生成する
             const wrapper = document.createElement("div");
-            wrapper.setAttribute("id", "node_" + this.nodes.length);
+            wrapper.setAttribute("id", "node_" + data.id);
             //TaskEditのmouseDoubleClickメソッドを呼び出すようにする
             //setAttributeでv-onと書いてメソッド指定でも反応するらしい
             //wrapperのタグ内に生成したコンポーネントを入れる。
@@ -184,7 +162,7 @@ export default{
             //Component._instanceがchildNodeか、parentNodeのidが-1ではないならそこだけ線を描画する。
             //ただし線の描画はノードの数が偶数個のときだけ
             const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line1.setAttribute("id", "line1");
+            line1.setAttribute("id", "line1_" + data.id);
             line1.setAttribute("x1", Component._instance.data.TaskNode.x);
             line1.setAttribute("y1", Component._instance.data.TaskNode.y);
             line1.setAttribute("x2", Component._instance.data.ParentNode.x);
@@ -199,51 +177,10 @@ export default{
             //this.nodes.push(Component._instance);
             //数字をキーとするノードを追加
             this.nodes[data.id.toString()] = Component._instance;
-            if(Object.keys(this.nodes).length >= 2){
-                //親ノードと子ノードのインスタンスをお互いに設定する
-                //var child = this.nodes[this.nodes.length - 1];  //childは最終ノードで問題ない
-                //var parent = this.nodes[data.parentId - 1];
-                var child = this.nodes[data.id];   //追加処理中のノードのこと
-                var parent = this.nodes[data.parentId];  //キーでアクセスしているためバグらない。
-                //[1].parentNode.node = [0]...
-                //this.nodes[this.nodes.length - 1].data.ParentNode.node = this.nodes[this.nodes.length - 2];
-                //子ノードの親は１つしか現在指定できないのでこれでいいはず。
-                child.data.ParentNode.node = parent;
-                //[0].childNode.node = [1]...
-                if(parent != null){
-                    //親側からみた子ノードは複数ある可能性がある
-                    //parent.data.ChildNode.node.push(child);
-                    //辞書登録
-                    parent.data.ChildNode.node[child.data.TaskNode.id] = child;
-                }
-                //子ノードへの線を設定する
-                if(Component._instance.data.ParentNode.node != null){
-                    Component._instance.data.ParentNode.node.data.TaskNode.line2[child.data.TaskNode.id] = line1;
-                }
-            }
-            document.getElementById("canvas").appendChild(line1);
-            /*
-            if(Component._instance.data.ParentNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            if(Component._instance.data.ChildNode.id >= 0 && this.nodes.length % 2 == 0){
-            }
-            */
-           /*
-            const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line2.setAttribute("id", "line2");
-            line2.setAttribute("x1", Component._instance.data.TaskNode.x);
-            line2.setAttribute("y1", Component._instance.data.TaskNode.y);
-            line2.setAttribute("x2", Component._instance.data.ChildNode.x);
-            line2.setAttribute("y2", Component._instance.data.ChildNode.y);
-            line2.setAttribute('stroke', '#008080');
-            line2.setAttribute('stroke-width', 5);
 
-            Component._instance.data.TaskNode.line2 = line2;
-            if(Component._instance.data.ChildNode.node != null){
-                Component._instance.data.ChildNode.node.TaskNode.line1 = line2;
-            }
-            document.getElementById("canvas").appendChild(line2);
-            */
+            this.changeParent(data.id, data.parentId, Component._instance);
+
+            document.getElementById("canvas").appendChild(line1);
 
             var keys = Object.keys(this.nodes);
             for(var i = 0; i < keys.length; i++){
@@ -256,6 +193,103 @@ export default{
 
             document.getElementById("MindMapDraw").appendChild(wrapper);
 
+        },
+        deleteNode:function(){
+            //削除命令が執行されたら
+            var i = this.resDatas.id;
+            var node = this.nodes[i].data;  //対象ノードのキーを取得
+            var parentNode = node.ParentNode.node;
+            var childNode = node.ChildNode.node;
+            //console.log("削除ノード：" + node + "親ノード：" + parentNode + "子ノード：" + childNode);
+
+            this.parentInfFix(parentNode);
+
+            this.childInfFix(childNode, parentNode);
+
+            //該当の辞書要素を削除
+            clearInterval(this.nodes[i].data.TaskNode.intervalId);
+            delete this.nodes[i];
+            //ノードと線のhtmlを削除
+            let element = document.getElementById("node_" + i);
+            let line1Element = document.getElementById("line1_" + i);
+            element.remove();
+            line1Element.remove();
+
+        },
+        parentInfFix:function(parentNode){
+            //削除するノードの親ノード情報の修正処理
+            //削除するノードに親ノードがいる場合
+            if(parentNode != null){
+                //親ノードが持つ子ノードのキーの配列
+                let parentChildKeys = Object.keys(parentNode.data.ChildNode.node);
+                console.log(parentChildKeys);
+                //削除するノードの親ノードの子ノードに登録されている自分のノードを削除する
+                for(var j = 0; j < parentChildKeys.length; j++){
+                    //見つかったら削除
+                    if(parentNode.data.ChildNode.node[parentChildKeys[j]].data.TaskNode.id == this.resDatas.id){
+                        console.log("見つかった！ノードキー：" + parentChildKeys[j]);
+                        //親ノードに登録されている子ノードを削除。
+                        delete parentNode.data.ChildNode.node[parentChildKeys[j]];
+                        //削除対象につながっているline2も同様に削除
+                        delete parentNode.data.TaskNode.line2[parentChildKeys[j]];
+
+                        //削除は１つだけなのでループを出る
+                        break;
+                    }                    
+                }
+            }
+        },
+        childInfFix:function(childNode, parentNode){
+            //削除するノードの子ノード情報の修正処理
+            //削除するノードに子ノードがいる場合
+            if(Object.keys(childNode).length != 0){
+                let childKeys = Object.keys(childNode);
+                console.log("子ノード：" + childKeys);
+                //削除するノードの子ノードの親ノードに登録されている自分のノードを削除する
+                for(let j = 0; j < childKeys.length; j++){
+                    //もしルートノードを消したなら
+                    if(parentNode == null){
+                        //親ノードと、親ノードに向かう線をnullに
+                        childNode[childKeys[j]].data.ParentNode.node = null;
+                        childNode[childKeys[j]].data.ParentNode.x = 0;
+                        childNode[childKeys[j]].data.ParentNode.y = 0;
+                    }
+                    else{
+                        //親ノードに新しく子ノードを追加
+                        parentNode.data.ChildNode.node[childKeys[j]] = childNode[childKeys[j]];
+                        //親ノードに親から子への線の情報を紐づける
+                        parentNode.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+
+                        //子供たちを、削除するノードの親ノードにつなげる
+                        childNode[childKeys[j]].data.ParentNode.node = parentNode;
+                        //childNodeのParentNodeの座標の参照先をparentNodeにしておく処理を追記
+
+                        //線も同様に削除するノードの親ノードのキーにつなげる。親ノード側も子ノードの参照先を追加
+                        //childNode[childKeys[j]].data.ParentNode.node.data.TaskNode.line2[childKeys[j]] = childNode[childKeys[j]].data.TaskNode.line1;
+                        childNode[childKeys[j]].data.TaskNode.line1 = parentNode.data.TaskNode.line2[childKeys[j]];
+                    }
+                }                
+            }
+        },
+        changeParent:function(childId, parentId, currentNode){
+            if(Object.keys(this.nodes).length >= 2){
+                //親ノードと子ノードのインスタンスをお互いに設定する
+                var child = this.nodes[childId];   //追加処理中のノードのこと
+                var parent = this.nodes[parentId];  //キーでアクセスしているためバグらない。
+                //子ノードの親は１つしか現在指定できないのでこれでいいはず。
+                child.data.ParentNode.node = parent;
+                //[0].childNode.node = [1]...
+                if(parent != null){
+                    //親側からみた子ノードは複数ある可能性がある
+                    //辞書登録
+                    parent.data.ChildNode.node[child.data.TaskNode.id] = child;
+                }
+                //子ノードへの線と親ノードへの線を設定する
+                if(currentNode.data.ParentNode.node != null){
+                    currentNode.data.ParentNode.node.data.TaskNode.line2[child.data.TaskNode.id] = currentNode.data.TaskNode.line1;
+                    currentNode.data.TaskNode.line1 = currentNode.data.ParentNode.node.data.TaskNode.line2[child.data.TaskNode.id];
+                }
+            }
         }
     }
 }
