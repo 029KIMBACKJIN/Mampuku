@@ -38,9 +38,7 @@
       };
     },
     created() {
-
       console.log("캘린더 생성");
-
       this.generateCalendarWithUID();
     },
     methods: {

@@ -35,5 +35,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const app = createApp(App);
+const eventBus = {};
+app.provide('eventBus', eventBus);
 
 app.use(router).use(store).mount('#app');

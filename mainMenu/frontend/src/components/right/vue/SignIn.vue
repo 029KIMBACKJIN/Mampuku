@@ -19,7 +19,6 @@
   </template>
   <script>
   import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-  // import { setPersistence, signInWithRedirect, inMemoryPersistence, GoogleAuthProvider } from "firebase/auth";
   
   export default {
     name: 'SignIn',
@@ -53,8 +52,6 @@
             const user = userCredential.user;
             console.log(user);
             sessionStorage.setItem("currentUser", JSON.stringify(user));
-
-
             //追加。MindMapDrawで感知して向こうで削除する
             sessionStorage.setItem("login", true);
           })
