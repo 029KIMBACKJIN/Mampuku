@@ -10,7 +10,7 @@
         line-height: 80px;
         "
         v-bind:style="{
-            transform: `translate(${TaskNode.x + moveDelta - TaskNode.drawWidth}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
+            transform: `translate(${TaskNode.x - TaskNode.drawWidth}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
             backgroundColor: TaskNode.color
         }"  
         v-on:dblclick="mouseDoubleClick"
@@ -32,8 +32,6 @@ export default{
     props: {
     },
     data: () => ({
-        windowWidth:window.innerWidth, //ウィンドウサイズについて。初期値は現在のwindowサイズ。innerHeightは必要になったら追加する
-        moveDelta:0,    
         ParentNode:{
             node:null,
             x:0,
@@ -45,9 +43,9 @@ export default{
             scY:2,
             maxScX:4,
             maxScY:4,
-            x:100,
-            y:600,
-            drawWidth:300,
+            x:200,
+            y:300,
+            drawWidth:5000,
             drawHeight:100,
             color:"#FFFFFF",
             taskName:"タスク名",        
@@ -56,6 +54,7 @@ export default{
             line2:{},    //子ノードへの線
             currentDate:null,  //現在時刻
             intervalId:null,
+            resetIntervalSwi:false,   //計算やり直し開始フラグ
             deadline:null   //締め切り日
 
         },
@@ -70,13 +69,18 @@ export default{
     mounted(){
         //1秒単位で現在時刻を更新する。
         this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
-        window.addEventListener("resize", this.windowResize);
     },
     //終了直前に呼ばれるメソッド？
     beforeUnmount(){
-        window.removeEventListener("resize", this.windowResize);
     },
     watch:{
+        resetIntervalSwi:function(){
+            this.TaskNode.scX = 2;
+            this.TaskNode.scY = 2;
+            this.TaskNode.color = "#FFFFFF";
+            clearInterval(this.TaskNode.intervalId);
+            this.TaskNode.intervalId = setInterval(this.getCurrentDate, 1000);
+        }
     },
     methods:{
         mouseDoubleClick: function(){
@@ -102,15 +106,6 @@ export default{
             this.TaskNode.clicking = false;
             //this.TaskNode.taskName = "離した";
         },
-        windowResize:function(){
-            /*
-            //前よりもウィンドウサイズが大きくなったら正の値、逆なら負の値になる。
-            this.moveDelta = (this.windowWidth - window.innerWidth)*10;                
-            this.TaskNode.drawWidth = 100 * window.innerWidth / this.windowWidth;
-            this.windowWidth = window.innerWidth;
-            console.log("ウィンドウサイズが変更された:" + this.moveDelta);
-            */
-        },
         setPos:function(){
             if(this.ParentNode.node != null){
                 //現在ノードが親ノードの位置を記憶
@@ -123,15 +118,6 @@ export default{
             var childKeys = Object.keys(this.ChildNode.node);
             if(this.ChildNode.node.length != 0){
                 //現在ノードが子ノードの位置を記憶
-                /*
-                this.ChildNode.x =  this.ChildNode.node[0].data.TaskNode.x;
-                this.ChildNode.y =  this.ChildNode.node[0].data.TaskNode.y;
-                //子ノードが親ノードの位置を記憶
-                for(var i = 0; i < this.ChildNode.node.length; i++){
-                    this.ChildNode.node[i].data.ParentNode.x = this.TaskNode.x;
-                    this.ChildNode.node[i].data.ParentNode.y = this.TaskNode.y;
-                }
-                */
                //varは関数スコープで、letがブロックスコープらしい。
                 //子ノードが親ノードの位置を記憶
                 for(var i = 0; i < childKeys.length; i++){
@@ -154,12 +140,6 @@ export default{
                     this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
                     this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
                 }
-                /*
-                if(this.ParentNode.node.TaskNode.line2 != null){
-                    this.ParentNode.node.TaskNode.line2.setAttribute("x1", this.ParentNode.node.TaskNode.x);
-                    this.ParentNode.node.TaskNode.line2.setAttribute("y1", this.ParentNode.node.TaskNode.y);
-                }
-                */
             }
             //親(1)から子(多)への線
             if(this.TaskNode.line2.length != 0){
@@ -170,28 +150,15 @@ export default{
                         this.TaskNode.line2[childKeys[i]].setAttribute("y1", this.TaskNode.y);                
                         this.TaskNode.line2[childKeys[i]].setAttribute("x2", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
                         this.TaskNode.line2[childKeys[i]].setAttribute("y2", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
-                        console.log("line2[" + childKeys[i] + "]を設定中");
-                    }
-                    else{
-                        console.log("line2なし：" + this.TaskNode.line2[childKeys[i]]);
                     }
                     if(this.ChildNode.node[childKeys[i]].data.TaskNode.line1 != null){
                         this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
                         this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
                         this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
                         this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
-                        console.log("line1[" + childKeys[i] + "]を設定中");
                     }
                 }
             }
-            else{
-                console.log("line2がない");
-            }
-            /*
-            console.log("parent(x:" + this.ParentNode.x + ", y:" + this.ParentNode.y + ")");
-            console.log("TaskNode(x:" + this.TaskNode.x + ", y:" + this.TaskNode.y + ")");
-            console.log("child(x:" + this.ChildNode.x + ", y:" + this.ChildNode.y + ")");
-            */
         },
         getCurrentDate:function(){
             //Tue May 30 2023 09:47:24 GMT+0900のように取得される
@@ -232,29 +199,34 @@ export default{
                     r = parseInt(r, 16);  //16進数文字列を10進数に変換
                     g = parseInt(g, 16);  //16進数文字列を10進数に変換
                     b = parseInt(b, 16);  //16進数文字列を10進数に変換
-                    g -= parseInt(g / days);
-                    b -= parseInt(b / days);
-                    if(r < 10){
-                        r = "0" + r.toString(16);  //16進数文字列を10進数に変換
+                    
+                    //0～15は16進数にすると1桁になるから
+                    if(r - parseInt(r / days) < 16){
+                        //r -= parseInt(r / days);
+                        r = "0" + r.toString(16);  //10進数を16進数文字列に変換
                     }
                     else{
-                        r = r.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    if(g < 10){
-                        g = "0" + g.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    else{
-                        g = g.toString(16);  //16進数文字列を10進数に変換
-                    }
-                    if(b < 10){
-                        b = "0" + b.toString(16);  //16進数文字列を10進数に変換
+                        //r -= parseInt(r / days);
+                        r = r.toString(16);  //10進数を16進数文字列に変換
+                    }                    
+                    if(g - parseInt(g / days) < 16){
+                        g -= parseInt(g / days);
+                        g = "0" + g.toString(16);  //10進数を16進数文字列に変換
                     }
                     else{
-                        b = b.toString(16);  //16進数文字列を10進数に変換
+                        g -= parseInt(g / days);
+                        g = g.toString(16);  //10進数を16進数文字列に変換
+                    }
+                    if(b - parseInt(b / days) < 16){
+                        b = "0" + b.toString(16);  //10進数を16進数文字列に変換
+                    }
+                    else{
+                        b -= parseInt(b / days);
+                        b = b.toString(16);  //10進数を16進数文字列に変換
                     }
                     this.TaskNode.color = rgb[0] + r + g + b;
                 }
-
+                console.log(this.TaskNode.color);
                 this.setPos();
                 //期限を過ぎたら
                 if(days <= 0){
