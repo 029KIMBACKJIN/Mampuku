@@ -18,6 +18,10 @@ router.post("/all", function(req, res){
     dbController.findWithIdAll(req,res);
 });
 
+router.post("/findOne", function(req, res){
+    dbController.findOne(req, res);
+});
+
 router.post("/findParent", function(req, res){
     dbController.findOne(req, res);
 });

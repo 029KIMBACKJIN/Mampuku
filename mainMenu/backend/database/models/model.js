@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.BOOLEAN
       },
       parentId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       childId: {
         type: Sequelize.INTEGER

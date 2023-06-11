@@ -65,3 +65,9 @@ p{
     background-color: white;
     padding: 20px;
   }
+  #parentsEdit{
+    background-color: rgb(146, 255, 240);
+    overflow-x: scroll;
+    overflow-y: scroll;
+    position: relative;
+  }

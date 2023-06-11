@@ -44,9 +44,14 @@
               <p>
                 親ノード <!-- (oarentNode) -->
               </p>
+              <div id = "parents" v-on:mouseenter="selectNodes">
+                <button type="button" id = "none" name="button1" value="-1" style="background-color: #FFFFFF;">親ノード無し</button>
+              </div>
+              <!--
               <select v-model="select" name="nodes" id="TaskNodes" v-on:mousedown="selectNodes">
                 <option name = "" value="">なし</option>
               </select>
+              -->
               <br><br>
             </form>
             <button v-on:click="createTask">タスク登録 <!-- (Create Task) --></button>
@@ -77,12 +82,13 @@ export default{
         resDatas:{
         },
         isTaskCreatedSwitch: false, 
-        select:"親ノード選択",
+        //select:"親ノード選択",
         taskName:"",
         taskContent:"",
         deadline:null,
         complete:false,
         parentId: -1,
+        selectParentIds:{},
         childId: -1,
         userId:"",
         isModalOpen: false,
@@ -124,6 +130,7 @@ export default{
       }
     },
     watch:{
+      /*
       select:function(){
         //ドロップダウンメニューが選択されたら呼ばれる。valueが取れる
         console.log(this.select);
@@ -136,6 +143,7 @@ export default{
           alert(e);
         });
       }
+      */
     },
     methods: {
       openModal() {
@@ -164,6 +172,29 @@ export default{
           }
           // ログインした人のUID
           const uid = user.uid;
+
+          var parentKeys = Object.keys(this.selectParentIds);
+          var parentIds = "";
+          //親ノードたちを決定する。保存形式は「1,2,3,4,5」のような形
+          for(let i = 0; i < parentKeys.length; i++){
+            if(this.selectParentIds[parentKeys[i]]){
+              var key = parentKeys[i].split('_')[1];
+              if(i == parentKeys.length - 1){
+                parentIds += key;
+              }
+              else{
+                parentIds += key + ",";
+              }
+            }
+          }
+          //型も含めて厳密に判断
+          if(parentIds === ""){
+            parentIds = "-1";   //一応使っているところある。
+          }
+          //終端が「,」で終わっている場合除去する
+          else if(parentIds.split('')[parentIds.split('').length - 1] == ","){
+            parentIds = parentIds.slice(0, parentIds.split('').length - 1);
+          }
           //送信ボタンを押したとき
           //データを送りたい場合はpost（express側も）と書いてリクエストする
           axios.post("/TaskAdd/create", {
@@ -172,7 +203,7 @@ export default{
             contents:this.taskContent,
             deadline:this.deadline,
             complete:this.complete,
-            parentId:this.parentId,
+            parentId:parentIds,
             childId:-1,
             userId: uid
           }).then((res) =>{
@@ -230,16 +261,25 @@ export default{
       selectNodes:function(){
         let element = this.clearOptions();
         const user = getAuth().currentUser;
+        this.selectParentIds = {};
         //データベースから、登録されているタスク一覧を表示させる
         axios.post("/TaskAdd/all", {
           uid: user.uid
         }).then((res)=>{          
           for(var i = 0; i < res.data.length; i++){
-            var option = document.createElement("option");          
-            //option.setAttribute("id",res.data[i].id);
-            option.setAttribute("value", res.data[i].id);
-            option.text = res.data[i].title;
-            element.appendChild(option);
+            //ボタン生成
+            let idName = "parent_" + res.data[i].id;
+            if(document.getElementById(idName) == null){
+              var button = document.createElement("button");
+              button.setAttribute("type", "button");
+              button.setAttribute("id", idName);
+              button.setAttribute("value", idName);
+              button.setAttribute("style", "background-color:#FFFFFF");
+              button.textContent = res.data[i].title;
+              //チェックボックスの状態が変わったら特定の関数を呼ぶようにする。
+              button.addEventListener("click", this.selectParents);
+              element.appendChild(button);
+            }
           }
         }).catch((e)=>{
           alert(e.message);
@@ -247,12 +287,33 @@ export default{
 
       },
       clearOptions:function(){
-        let element = document.getElementById("TaskNodes");
+        //let element = document.getElementById("TaskNodes");
+        let element = document.getElementById("parents");
         //オプションをクリアする(最初以外)
         while(element.children.length > 1){
           element.removeChild(element.lastChild);
         }
         return element;
+      },
+      selectParents:function(event){
+        //チェックボックスのどれか１つでも変化があれば呼ばれる。valueが取れる
+        console.log(event.target.id);
+        let idName = event.target.id;
+        var element = document.getElementById(event.target.id);
+        if(this.selectParentIds[idName] != undefined){
+          if(this.selectParentIds[idName] == true){
+            this.selectParentIds[idName] = false;
+            element.setAttribute("style", "background-color:#FFFFFF");
+          }
+          else{
+            this.selectParentIds[idName] = true;
+            element.setAttribute("style", "background-color:#FF0000");
+          }
+        }
+        else{
+          this.selectParentIds[idName] = true;
+          element.setAttribute("style", "background-color:#FF0000");
+        }
       },
       // DB操作確認のため仮で作ったFuntion
       // Create Task ボタンを押したらTitleに入力した数字にてDBで検索

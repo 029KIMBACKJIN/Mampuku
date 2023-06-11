@@ -52,3 +52,10 @@ p{
     background-color: white;
     padding: 20px;
   }
+
+  #parents{
+    background-color: rgb(146, 255, 240);
+    overflow-x: scroll;
+    overflow-y: scroll;
+    position: relative;
+  }

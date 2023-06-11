@@ -44,11 +44,15 @@
             <p>
               親ノード <!-- (oarentNode) -->
             </p>
+            <div id = "parentsEdit" v-on:mouseenter="selectNodes">
+                <button type="button" id = "none" name="button1" value="-1" style="background-color: #FFFFFF;">親ノード無し</button>
+            </div>
+            <!--
             <select v-model="select" name="nodes" id="TaskNodesEdit" v-on:mousedown="selectNodes">
               <option id = "nowParent" value="">親ノード</option>
             </select>
+            -->
             <br><br>
-
           </form>
           <button v-on:click="createTask">タスク登録 <!-- (Edit Task) --></button>
           <button v-on:click="deleteTask" style="color: red;">タスク削除 <!-- (Delete Task) --></button>
@@ -86,10 +90,12 @@ export default{
         complete:false,
 
         isModalOpen: false,
-        modalContent: "左側のマップに表示されているタスクをダブルクリックすれば編集ができるようになります。",
+        moalContent: "左側のマップに表示されているタスクをダブルクリックすれば編集ができるようになります。",
 
         parentId: -1,
-        select:-1
+        selectParentIds:{},
+        nowParents:{}
+        //select:-1
 
     }),
     computed:{
@@ -141,18 +147,6 @@ export default{
         //タスク編集画面表示
         this.isTaskFormOpen = true;
         
-      },
-      select:function(){
-        //ドロップダウンメニューが選択されたら呼ばれる。valueが取れる
-        console.log(this.select);
-        axios.post("/TaskEdit/findParent",{
-          id: this.select
-        }).then((res)=>{
-          //親ノードを決定する
-          this.parentId = res.data.id;
-        }).catch(()=>{
-          //alert(e);
-        });
       }
     },
     methods: {
@@ -173,22 +167,22 @@ export default{
       },
       initOption: function(parentId){
         //選択肢の初期状態
-        axios.post("/TaskEdit/findParent", {
-          id: parentId
-        }).then((res)=>{
-          let doc = document.getElementById("nowParent");
-          if(doc != null){
-            doc.textContent = res.data.title + "(現在の親ノード)";
+        var parentIds = parentId.split(',');
+        this.nowParents = {};
+        //console.log(parentIds);
+        for(let i = 0; i < parentIds.length; i++){
+          if(parentIds[i] != "-1"){
+            axios.post("/TaskEdit/findParent", {
+              id: parentIds[i]
+            }).then((res)=>{
+              console.log(res.data.title);
+              //現在設定されている親ノードを保存する
+              this.nowParents[res.data.id] = true;
+            }).catch(()=>{
+              //
+            });
           }
-          }).catch(()=>{
-          //alert(e);
-          let doc = document.getElementById("nowParent");
-          if(doc != null){
-            doc.textContent = "親ノードなし";
-            doc.value = "";
-          }
-        })
-
+        }
       },
       toggle: function() {
         if(this.isTaskFormOpen == true) this.isTaskFormOpen = false;
@@ -201,12 +195,49 @@ export default{
         const uid = user.uid;
         var datas = this.currentNodeDatas;
 
+        var parentKeys = Object.keys(this.selectParentIds);
+        var nowParentKeys = Object.keys(this.nowParents);
+        var parentIds = "";
+        var nowParentIds = "";
+        //親ノードたちを決定する。保存形式は「1,2,3,4,5」のような形
+        for(let i = 0; i < parentKeys.length; i++){
+          if(this.selectParentIds[parentKeys[i]]){
+            var key = parentKeys[i].split('_')[1];
+            if(i == parentKeys.length - 1){
+              parentIds += key;
+            }
+            else{
+              parentIds += key + ",";
+            }
+          }
+        }
+        //型も含めて厳密に判断
+        if(parentIds === ""){
+          parentIds = "-1";   //一応使っているところある。
+        }
+        //終端が「,」で終わっている場合除去する
+        else if(parentIds.split('')[parentIds.split('').length - 1] == ","){
+          parentIds = parentIds.slice(0, parentIds.split('').length - 1);
+        }
+        for(let i = 0; i < nowParentKeys.length; i++){
+          key = nowParentKeys[i];
+          if(i == nowParentKeys.length - 1){
+            nowParentIds += key;
+          }
+          else{
+            nowParentIds += key + ",";
+          }
+        }
+        //型も含めて厳密に判断
+        if(nowParentIds === ""){
+          nowParentIds = "-1";   //一応使っているところある。
+        }
         //エラー回避用
         if(this.inputTaskName == this.currentNodeDatas.title && 
         this.inputTaskContent == this.currentNodeDatas.contents && 
         this.inputDeadLine == this.currentNodeDatas.deadline.split("T")[0] && 
         this.inputComplete == this.currentNodeDatas.complelte && 
-        this.select == -1
+        parentIds == nowParentIds
         ){
           let ok = confirm("変更が無いようです。編集をやめますか？");
           if(ok){
@@ -215,13 +246,12 @@ export default{
           return;
         }
         axios.post("/TaskEdit/update", {
-          //ここにデータを記載 idは自動なのでいらない。parentId, childIdはどうやって求める？
           id:datas.id,
           title: this.inputTaskName,
           contents:this.inputTaskContent,
           deadline:this.inputDeadLine,
           complete:this.inputComplete,
-          parentId:this.parentId,
+          parentId:parentIds,
           childId:datas.childId,
           userId: uid
         }).then((res) =>{
@@ -241,7 +271,8 @@ export default{
             deadline: res.data.deadline,
             complete: res.data.complelte,
             parentId: res.data.parentId,
-            childId: res.data.childId
+            childId: res.data.childId,
+            beforeParentId: this.currentNodeDatas.parentId  //変更前の親ノードについて
           }
           this.isTaskEditSwitch = !this.isTaskEditSwitch;
           this.inputTaskName = "";
@@ -323,24 +354,66 @@ export default{
       selectNodes:function(){
         let element = this.clearOptions();
         const user = getAuth().currentUser;
+        this.selectParentIds = {};
         //データベースから、登録されているタスク一覧を表示させる
         axios.post("/TaskEdit/all", {
           uid: user.uid
         }).then((res)=>{          
           for(var i = 0; i < res.data.length; i++){
-            var option = document.createElement("option");          
-            //option.setAttribute("id",res.data[i].id);
-            option.setAttribute("value", res.data[i].id);
-            option.text = res.data[i].title;
-            element.appendChild(option);
+            //編集中のノード自身なら飛ばす
+            if(this.currentNodeDatas.id == res.data[i].id){
+              continue;
+            }
+            //ボタン生成
+            let idName = "parentEdit_" + res.data[i].id;
+            if(document.getElementById(idName) == null){
+              var button = document.createElement("button");
+              button.setAttribute("type", "button");
+              button.setAttribute("id", idName);
+              button.setAttribute("value", idName);
+              //現在の親なら赤くして初期状態を生成
+              if(this.nowParents[res.data[i].id] == true){
+                button.setAttribute("style", "background-color:#FF0000");
+                this.selectParentIds[idName] = true;
+              }
+              else{
+                button.setAttribute("style", "background-color:#FFFFFF");
+                this.selectParentIds[idName] = false;
+              }
+              button.textContent = res.data[i].title;
+              //チェックボックスの状態が変わったら特定の関数を呼ぶようにする。
+              button.addEventListener("click", this.selectParents);
+              element.appendChild(button);
+            }
           }
         }).catch((e)=>{
           alert(e.message);
         })
 
       },
+      selectParents:function(event){
+        //チェックボックスのどれか１つでも変化があれば呼ばれる。valueが取れる
+        console.log(event.target.id, this.selectParentIds);
+        let idName = event.target.id;
+        var element = document.getElementById(event.target.id);
+        if(this.selectParentIds[idName] != undefined){
+          if(this.selectParentIds[idName] == true){
+            this.selectParentIds[idName] = false;
+            element.setAttribute("style", "background-color:#FFFFFF");
+          }
+          else{
+            this.selectParentIds[idName] = true;
+            element.setAttribute("style", "background-color:#FF0000");
+          }
+        }
+        else{
+          this.selectParentIds[idName] = true;
+          element.setAttribute("style", "background-color:#FF0000");
+        }
+      },
+
       clearOptions:function(){
-        let element = document.getElementById("TaskNodesEdit");
+        let element = document.getElementById("parentsEdit");
         //オプションをクリアする(最初以外)
         while(element.children.length > 1){
           element.removeChild(element.lastChild);

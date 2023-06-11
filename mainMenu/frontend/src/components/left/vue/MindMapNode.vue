@@ -7,7 +7,8 @@
         height: 100px;  /*高さ*/
         border-radius: 50%;  /*角の丸み*/
         text-align:center;
-        line-height: 80px;
+        font-size: 10%;
+        line-height: 10px;
         "
         v-bind:style="{
             transform: `translate(${TaskNode.x - TaskNode.drawWidth}px, ${TaskNode.y - TaskNode.drawHeight}px) scale(${TaskNode.scX}, ${TaskNode.scY})`,
@@ -33,7 +34,7 @@ export default{
     },
     data: () => ({
         ParentNode:{
-            node:null,
+            node:{},
             x:0,
             y:0
         },
@@ -50,7 +51,7 @@ export default{
             color:"#FFFFFF",
             taskName:"タスク名",        
             clicking:false,
-            line1:null,   //親ノードへの線
+            line1:{},   //親ノードへの線
             line2:{},    //子ノードへの線
             currentDate:null,  //現在時刻
             intervalId:null,
@@ -107,20 +108,29 @@ export default{
             //this.TaskNode.taskName = "離した";
         },
         setPos:function(){
-            if(this.ParentNode.node != null){
+            var parentKeys = Object.keys(this.ParentNode.node);
+            if(this.ParentNode.node.length != 0){
+                for(let i = 0; i < parentKeys.length; i++){
+                    if(this.ParentNode.node[parentKeys[i]] != null){
+                        this.ParentNode.node[parentKeys[i]].data.ChildNode.x = this.TaskNode.x;                    
+                        this.ParentNode.node[parentKeys[i]].data.ChildNode.y = this.TaskNode.y;                    
+                    }
+                }
+                /*
                 //現在ノードが親ノードの位置を記憶
                 this.ParentNode.x =  this.ParentNode.node.data.TaskNode.x;
                 this.ParentNode.y =  this.ParentNode.node.data.TaskNode.y;
                 //親ノードが子ノードの位置を記憶
                 this.ParentNode.node.data.ChildNode.x = this.TaskNode.x;
                 this.ParentNode.node.data.ChildNode.y = this.TaskNode.y;
+                */
             }
             var childKeys = Object.keys(this.ChildNode.node);
             if(this.ChildNode.node.length != 0){
                 //現在ノードが子ノードの位置を記憶
                //varは関数スコープで、letがブロックスコープらしい。
                 //子ノードが親ノードの位置を記憶
-                for(var i = 0; i < childKeys.length; i++){
+                for(let i = 0; i < childKeys.length; i++){
                     this.ChildNode.node[childKeys[i]].data.ParentNode.x = this.TaskNode.x;
                     this.ChildNode.node[childKeys[i]].data.ParentNode.y = this.TaskNode.y;
                 }
@@ -128,8 +138,44 @@ export default{
             }
             //親コンポーネントにデータを送る
             //this.$emit("position",[this.TaskNode.x, this.TaskNode.y]);
-            //子(多)から親(1)への線
-            if(this.TaskNode.line1 != null){
+            //自身から親(多)への線
+            if(this.TaskNode.line1.length != 0){
+                if(parentKeys.length == 0){
+                    //-1ではなく、ルートノードが変わった場合はline1のキーは-1とは限らなくなるため
+                    //現在存在するline1のキーにする。親のキーが存在しないときは、キーは１つしかないはず。
+                    let rootKey = Object.keys(this.TaskNode.line1)[0];
+                    if(rootKey != null){
+                        this.TaskNode.line1[rootKey].setAttribute("x1", this.TaskNode.x);
+                        this.TaskNode.line1[rootKey].setAttribute("y1", this.TaskNode.y);
+                        this.TaskNode.line1[rootKey].setAttribute("x2", this.ParentNode.x);
+                        this.TaskNode.line1[rootKey].setAttribute("y2", this.ParentNode.y);
+                    }
+                }
+                else{
+                    for(let i = 0; i < parentKeys.length; i++){
+                        //自分から親（多）への線について
+                        if(this.TaskNode.line1[parentKeys[i]] != null){
+                            this.TaskNode.line1[parentKeys[i]].setAttribute("x1", this.TaskNode.x);
+                            this.TaskNode.line1[parentKeys[i]].setAttribute("y1", this.TaskNode.y);
+                            if(this.ParentNode.node[parentKeys[i]] != null){
+                                this.TaskNode.line1[parentKeys[i]].setAttribute("x2", this.ParentNode.node[parentKeys[i]].data.TaskNode.x);
+                                this.TaskNode.line1[parentKeys[i]].setAttribute("y2", this.ParentNode.node[parentKeys[i]].data.TaskNode.y);
+                            }
+                        }
+                        //親（多）から自分への線について
+                        //-1のキーを親ノードとするルートノードが存在するため。
+                        if(this.ParentNode.node[parentKeys[i]] != null){
+                            var parent = this.ParentNode.node[parentKeys[i]].data.TaskNode;
+                            if(parent.line2[this.TaskNode.id] != null){
+                                parent.line2[this.TaskNode.id].setAttribute("x1", parent.x);
+                                parent.line2[this.TaskNode.id].setAttribute("y1", parent.y);
+                                parent.line2[this.TaskNode.id].setAttribute("x2", this.TaskNode.x);
+                                parent.line2[this.TaskNode.id].setAttribute("y2", this.TaskNode.y);
+                            }    
+                        }
+                    }
+                }
+                /*
                 this.TaskNode.line1.setAttribute("x1", this.TaskNode.x);
                 this.TaskNode.line1.setAttribute("y1", this.TaskNode.y);
                 if(this.ParentNode.node != null){
@@ -140,22 +186,26 @@ export default{
                     this.TaskNode.line1.setAttribute("x2", this.ParentNode.x);
                     this.TaskNode.line1.setAttribute("y2", this.ParentNode.y);
                 }
+                */
             }
-            //親(1)から子(多)への線
+            //自身から子(多)への線
             if(this.TaskNode.line2.length != 0){
                 //for(i = 0; i < this.TaskNode.line2.length; i++){
-                for(i = 0; i <  childKeys.length; i++){
+                for(let i = 0; i <  childKeys.length; i++){
+                    //自分から子（多）への線について
                     if(this.TaskNode.line2[childKeys[i]] != null){
                         this.TaskNode.line2[childKeys[i]].setAttribute("x1", this.TaskNode.x);
                         this.TaskNode.line2[childKeys[i]].setAttribute("y1", this.TaskNode.y);                
                         this.TaskNode.line2[childKeys[i]].setAttribute("x2", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
                         this.TaskNode.line2[childKeys[i]].setAttribute("y2", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
                     }
-                    if(this.ChildNode.node[childKeys[i]].data.TaskNode.line1 != null){
-                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x1", this.ChildNode.node[childKeys[i]].data.TaskNode.x);
-                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y1", this.ChildNode.node[childKeys[i]].data.TaskNode.y);
-                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("x2", this.TaskNode.x);
-                        this.ChildNode.node[childKeys[i]].data.TaskNode.line1.setAttribute("y2", this.TaskNode.y);
+                    //子（多）から自分への線について
+                    var child = this.ChildNode.node[childKeys[i]].data.TaskNode;
+                    if(child.line1[this.TaskNode.id] != null){
+                        child.line1[this.TaskNode.id].setAttribute("x1", child.x);
+                        child.line1[this.TaskNode.id].setAttribute("y1", child.y);
+                        child.line1[this.TaskNode.id].setAttribute("x2", this.TaskNode.x);
+                        child.line1[this.TaskNode.id].setAttribute("y2", this.TaskNode.y);
                     }
                 }
             }
@@ -226,7 +276,7 @@ export default{
                     }
                     this.TaskNode.color = rgb[0] + r + g + b;
                 }
-                console.log(this.TaskNode.color);
+                //console.log(this.TaskNode.color);
                 this.setPos();
                 //期限を過ぎたら
                 if(days <= 0){
