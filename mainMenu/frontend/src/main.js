@@ -12,24 +12,15 @@ import 'firebase/firestore'
 import router from './router/index.js'
 
 // Your web app's Firebase configuration
-// const firebaseConfig = {
-//     apiKey: process.env.VUE_APP_API_KEY,
-//     authDomain: process.env.VUE_APP_AUTH_DOMAIN,
-//     projectId: process.env.VUE_APP_PROJECT_ID,
-//     storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
-//     messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
-//     appId: process.env.VUE_APP_APP_ID,
-//   };
-
 const firebaseConfig = {
-  apiKey: "AIzaSyCf1ihZuy6iia5kqrD16eQGYIAPnWG7BD0",
-  authDomain: "dynamictaskmanagement.firebaseapp.com",
-  projectId: "dynamictaskmanagement",
-  storageBucket: "dynamictaskmanagement.appspot.com",
-  messagingSenderId: "194437187110",
-  appId: "1:194437187110:web:ad9a43f8c037b34e02c8e7",
-  measurementId: "G-Q4ZNZF61NT"
-};
+    apiKey: process.env.VUE_APP_API_KEY,
+    authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+    projectId: process.env.VUE_APP_PROJECT_ID,
+    storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
+    appId: process.env.VUE_APP_APP_ID,
+  };
+
 
 // Initialize Firebase
 initializeApp(firebaseConfig);
